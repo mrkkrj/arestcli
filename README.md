@@ -1,5 +1,6 @@
 # arestcli
-REST client using Asio (based on Casablanca)
+
+arestcli (Asio Rest Client) is a C++ REST client using (non-boost) Asio library underneath.
 
 This is a port of Microsoft's REST-SDK (aka Casablanca) using Asio library instead of boost::Asio!
 
@@ -68,3 +69,5 @@ int main()
 }
 ```
 
+## Note:
+ - the example VisualStudio project expects Asio (just Asio, not boost::Asio!!!) to be installed in ../asio-1.28.0
