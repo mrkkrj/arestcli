@@ -33,7 +33,7 @@ int main()
 
     try
     {
-        auto response = clientRestTest.request(methods::GET, uri_builder(U("/anything")).to_string()).get();
+        auto response = clientRestTest.request(methods::GET, U("/anything")).get();
         
         std::cout << "response status code:" << response.status_code() << std::endl;
 
