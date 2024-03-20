@@ -10,7 +10,7 @@ It was created because BEAST is quite unwieldy (and because it needs th whole of
 ## WIP: 
  - Only some tests on Windows done 
  - Websockets, compression and SLL disabled and not yet tested 
- - Only a VisualStudio 2022 provided!!! Only working for Debug build, to boot. :-(
+ - Only a VisualStudio 2022 solution provided!!! Only working for Debug build, to boot. :-(
 
 ## Plans: 
  - Currently a proprietary continuations library by Microsoft is used. I will try to remove this and use C++20 coroutines support in Asio instead.
