@@ -1,14 +1,19 @@
 # arestcli
 REST client using Asio (based on Casablanca)
 
-This is a port of Mincrosoft REST-SDK (aka Casablanca) using Asio library instead of boost::Asio and also forcing its usage on Windows. It was created because BEAST is quite unwieldy (and because it needs th whole of boost!!!).
+This is a port of Microsoft's REST-SDK (aka Casablanca) using Asio library instead of boost::Asio!
+
+It was created because BEAST is quite unwieldy (and because it needs th whole of boost!!!). On Windows the usage of Asio is also forced.
+
 
 ## WIP: 
-Only some tests on Windows done, Websockets, compression and SLL disabled and not yet tested. Only a VisualStudio 2022 provided!!!
+ - Only some tests on Windows done 
+ - Websockets, compression and SLL disabled and not yet tested 
+ - Only a VisualStudio 2022 provided!!!
 
 ## Plans: 
-Currently proprietary continuations library is used. I will try to remove this and use C++20 coroutines support in Asio instead.
-The std::wstring is used in the API at the moment. This is irritating, will try to switch to narrow strings (it's UTF8 everywhere, innnit?)
+ - Currently proprietary continuations library is used. I will try to remove this and use C++20 coroutines support in Asio instead.
+ - The std::wstring is used in the API at the moment. This is irritating, will try to switch to narrow strings (it's UTF8 everywhere, innnit?)
 
 ## Usage:
 
@@ -19,7 +24,6 @@ The std::wstring is used in the API at the moment. This is irritating, will try 
 using namespace web;
 using namespace web::http;
 using namespace web::json;
-
 
 int main()
 {
