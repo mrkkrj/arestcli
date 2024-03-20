@@ -1,7 +1,7 @@
 # arestcli
 REST client using Asio (based on Casablanca)
 
-This is a port of Mincrosoft REST-SDK (aka Casablanca) using Asio library instead of boost::Asio and also forcing its usage on Windows. It was created because BEAST is quite unwieldy (and because it needs th whole of boost!!!).
+This is a port of Mincrosoft REST-SDK (aka Casablanca) using Asio library instead of boost::Asio and also forcing its usage on Windows.
 
 ## WIP: 
 Only some tests on Windows done, Websockets, compression and SLL disabled and not yet tested. Only a VisualStudio 2022 provided!!!

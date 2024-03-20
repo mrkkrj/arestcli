@@ -1,0 +1,7 @@
+
+ -- current defines reqired for build:
+
+CPPREST_EXCLUDE_WEBSOCKETS
+CPPREST_EXCLUDE_COMPRESSION
+CPPREST_EXCLUDE_SSL
+_NO_ASYNCRTIMP // no DLL support
