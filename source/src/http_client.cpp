@@ -14,8 +14,9 @@
 ****/
 
 //#include "stdafx.h"
-
 #include "http_client_impl.h"
+
+#include "cpprest/version.h"
 
 namespace web { namespace http { namespace client {
 

@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Quelldateien">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Headerdateien">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Ressourcendateien">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Quelldateien\arestcli">
+      <UniqueIdentifier>{da0b2aaa-d3d6-4d81-a3b3-fabf0d812178}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\arestcli\common">
+      <UniqueIdentifier>{62a835ac-cc67-4a2c-b9fa-3b294fa4c101}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\arestcli\json">
+      <UniqueIdentifier>{82e77781-1ce6-4743-87f8-b3e5e7282cb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\arestcli\oauth">
+      <UniqueIdentifier>{f3f7498c-8122-4b5c-9a74-06b4f81e0d67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\arestcli\pplx">
+      <UniqueIdentifier>{c8a97d41-e729-469c-8d71-c4bbd1a1ee3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\arestcli\uri">
+      <UniqueIdentifier>{76d4ba35-9967-41d7-8a14-0a3b063173a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\arestcli\utilities">
+      <UniqueIdentifier>{f60a4a3e-0049-4e80-9ccc-78df3f04dd60}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\source\include\http_client.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\src\http_client_impl.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\src\common\string_utils.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\src\common\internal_http_helpers.h">
+      <Filter>Quelldateien\arestcli\common</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\examples\basic_example.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\src\http_client.cpp">
+      <Filter>Quelldateien\arestcli</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\src\http_client_asio.cpp">
+      <Filter>Quelldateien\arestcli</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\src\http_client_msg.cpp">
+      <Filter>Quelldateien\arestcli</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\src\common\http_helpers.cpp">
+      <Filter>Quelldateien\arestcli\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\src\common\http_msg.cpp">
+      <Filter>Quelldateien\arestcli\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\src\json\json.cpp">
+      <Filter>Quelldateien\arestcli\json</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\src\json\json_parsing.cpp">
+      <Filter>Quelldateien\arestcli\json</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\src\json\json_serialization.cpp">
+      <Filter>Quelldateien\arestcli\json</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\src\utilities\asyncrt_utils.cpp">
+      <Filter>Quelldateien\arestcli\utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\src\utilities\base64.cpp">
+      <Filter>Quelldateien\arestcli\utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\src\utilities\web_utilities.cpp">
+      <Filter>Quelldateien\arestcli\utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\src\uri\uri.cpp">
+      <Filter>Quelldateien\arestcli\uri</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\src\uri\uri_builder.cpp">
+      <Filter>Quelldateien\arestcli\uri</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\src\uri\uri_parser.cpp">
+      <Filter>Quelldateien\arestcli\uri</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\src\pplx\threadpool.cpp">
+      <Filter>Quelldateien\arestcli\pplx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\src\oauth\oauth1.cpp">
+      <Filter>Quelldateien\arestcli\oauth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\src\oauth\oauth2.cpp">
+      <Filter>Quelldateien\arestcli\oauth</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

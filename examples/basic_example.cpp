@@ -5,7 +5,6 @@
 #include <http_client.h>
 #include <cpprest/json.h>
 
-
 using namespace web;
 using namespace web::http;
 using namespace web::json;
@@ -56,20 +55,20 @@ int main()
     }
     catch (...)
     {
-        std::cout << "EXIT -- exception thrown!!!" << std::endl;
+        std::cout << "EXIT -- unknown exception thrown!!!" << std::endl;
         return -1;
     }
 
     // show:
     std::wstring respStrg = client_resp.serialize();
     std::string s1(respStrg.begin(), respStrg.end());
-    std::cout << "--- response www.httpbin.org/ip:" << s1 << "\n\n";
+    std::cout << "response www.httpbin.org/ip ---> " << s1 << "\n\n";
 
 
     // 2. just use get()!
     try
     {
-        auto response = clientRestTest.request(methods::GET, uri_builder(U("/anything")).to_string()).get();
+        auto response = clientRestTest.request(methods::GET, U("/anything")).get();
         
         std::cout << "response status code:" << response.status_code() << std::endl;
 
@@ -96,12 +95,12 @@ int main()
     }
     catch (...)
     {
-        std::cout << "EXIT -- exception thrown!!!" << std::endl;
+        std::cout << "EXIT -- unknown exception thrown!!!" << std::endl;
         return -1;
     }
 
     // show:
     respStrg = client_resp.serialize();
     std::string s2(respStrg.begin(), respStrg.end());
-    std::cout << " -- response www.httpbin.org/anything:" << s2 << "\n\n";
+    std::cout << "response www.httpbin.org/anything ---> " << s2 << "\n\n";
 }

@@ -1,6 +1,6 @@
 # arestcli
 
-arestcli (Asio Rest Client) is a C++ REST client using (non-boost) Asio library underneath.
+arestcli (i.e. Asio REST Client) is a C++ REST client using (non-boost) Asio library underneath.
 
 This is a port of Microsoft's REST-SDK (aka Casablanca) using Asio library instead of boost::Asio!
 
@@ -10,10 +10,10 @@ It was created because BEAST is quite unwieldy (and because it needs th whole of
 ## WIP: 
  - Only some tests on Windows done 
  - Websockets, compression and SLL disabled and not yet tested 
- - Only a VisualStudio 2022 provided!!!
+ - Only a VisualStudio 2022 provided!!! Only working for Debug build, to boot. :-(
 
 ## Plans: 
- - Currently proprietary continuations library is used. I will try to remove this and use C++20 coroutines support in Asio instead.
+ - Currently a proprietary continuations library by Microsoft is used. I will try to remove this and use C++20 coroutines support in Asio instead.
  - The std::wstring is used in the API at the moment. This is irritating, will try to switch to narrow strings (it's UTF8 everywhere, innnit?)
 
 ## Usage:

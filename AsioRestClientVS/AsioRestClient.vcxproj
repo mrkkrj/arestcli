@@ -105,7 +105,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;CPPREST_EXCLUDE_WEBSOCKETS;CPPREST_EXCLUDE_COMPRESSION;CPPREST_EXCLUDE_SSL;_NO_ASYNCRTIMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../\asio-1.28.0\asio-1.28.0/include;../asrestwrap/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../\asio-1.28.0\asio-1.28.0/include;../source/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -131,30 +131,30 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\asrestwrap\src\common\http_helpers.cpp" />
-    <ClCompile Include="..\asrestwrap\src\common\http_msg.cpp" />
-    <ClCompile Include="..\asrestwrap\src\http_client.cpp" />
-    <ClCompile Include="..\asrestwrap\src\http_client_asio.cpp" />
-    <ClCompile Include="..\asrestwrap\src\http_client_msg.cpp" />
-    <ClCompile Include="..\asrestwrap\src\json\json.cpp" />
-    <ClCompile Include="..\asrestwrap\src\json\json_parsing.cpp" />
-    <ClCompile Include="..\asrestwrap\src\json\json_serialization.cpp" />
-    <ClCompile Include="..\asrestwrap\src\oauth\oauth1.cpp" />
-    <ClCompile Include="..\asrestwrap\src\oauth\oauth2.cpp" />
-    <ClCompile Include="..\asrestwrap\src\pplx\threadpool.cpp" />
-    <ClCompile Include="..\asrestwrap\src\uri\uri.cpp" />
-    <ClCompile Include="..\asrestwrap\src\uri\uri_builder.cpp" />
-    <ClCompile Include="..\asrestwrap\src\uri\uri_parser.cpp" />
-    <ClCompile Include="..\asrestwrap\src\utilities\asyncrt_utils.cpp" />
-    <ClCompile Include="..\asrestwrap\src\utilities\base64.cpp" />
-    <ClCompile Include="..\asrestwrap\src\utilities\web_utilities.cpp" />
-    <ClCompile Include="..\exxamples\basic_example.cpp" />
+    <ClCompile Include="..\examples\basic_example.cpp" />
+    <ClCompile Include="..\source\src\common\http_helpers.cpp" />
+    <ClCompile Include="..\source\src\common\http_msg.cpp" />
+    <ClCompile Include="..\source\src\http_client.cpp" />
+    <ClCompile Include="..\source\src\http_client_asio.cpp" />
+    <ClCompile Include="..\source\src\http_client_msg.cpp" />
+    <ClCompile Include="..\source\src\json\json.cpp" />
+    <ClCompile Include="..\source\src\json\json_parsing.cpp" />
+    <ClCompile Include="..\source\src\json\json_serialization.cpp" />
+    <ClCompile Include="..\source\src\oauth\oauth1.cpp" />
+    <ClCompile Include="..\source\src\oauth\oauth2.cpp" />
+    <ClCompile Include="..\source\src\pplx\threadpool.cpp" />
+    <ClCompile Include="..\source\src\uri\uri.cpp" />
+    <ClCompile Include="..\source\src\uri\uri_builder.cpp" />
+    <ClCompile Include="..\source\src\uri\uri_parser.cpp" />
+    <ClCompile Include="..\source\src\utilities\asyncrt_utils.cpp" />
+    <ClCompile Include="..\source\src\utilities\base64.cpp" />
+    <ClCompile Include="..\source\src\utilities\web_utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\asrestwrap\include\http_client.h" />
-    <ClInclude Include="..\asrestwrap\src\common\internal_http_helpers.h" />
-    <ClInclude Include="..\asrestwrap\src\common\string_utils.h" />
-    <ClInclude Include="..\asrestwrap\src\http_client_impl.h" />
+    <ClInclude Include="..\source\include\http_client.h" />
+    <ClInclude Include="..\source\src\common\internal_http_helpers.h" />
+    <ClInclude Include="..\source\src\common\string_utils.h" />
+    <ClInclude Include="..\source\src\http_client_impl.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
