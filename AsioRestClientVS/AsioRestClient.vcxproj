@@ -71,6 +71,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -102,10 +105,10 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;CPPREST_EXCLUDE_WEBSOCKETS;CPPREST_EXCLUDE_COMPRESSION;CPPREST_EXCLUDE_SSL;_NO_ASYNCRTIMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING;CPPREST_EXCLUDE_COMPRESSION;CPPREST_EXCLUDE_WEBSOCKETS;_NO_ASYNCRTIMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../\asio-1.28.0\asio-1.28.0/include;../source/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\source\libs\websocketpp;../\asio-1.28.0\asio-1.28.0/include;../source/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -143,18 +146,43 @@
     <ClCompile Include="..\source\src\oauth\oauth1.cpp" />
     <ClCompile Include="..\source\src\oauth\oauth2.cpp" />
     <ClCompile Include="..\source\src\pplx\threadpool.cpp" />
+    <ClCompile Include="..\source\src\streams\fileio_posix.cpp" />
     <ClCompile Include="..\source\src\uri\uri.cpp" />
     <ClCompile Include="..\source\src\uri\uri_builder.cpp" />
     <ClCompile Include="..\source\src\uri\uri_parser.cpp" />
     <ClCompile Include="..\source\src\utilities\asyncrt_utils.cpp" />
     <ClCompile Include="..\source\src\utilities\base64.cpp" />
     <ClCompile Include="..\source\src\utilities\web_utilities.cpp" />
+    <ClCompile Include="..\source\src\websockets\client\ws_client.cpp" />
+    <ClCompile Include="..\source\src\websockets\client\ws_client_wspp.cpp" />
+    <ClCompile Include="..\source\src\websockets\client\ws_msg.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\source\include\cpprest\astreambuf.h" />
+    <ClInclude Include="..\source\include\cpprest\asyncrt_utils.h" />
+    <ClInclude Include="..\source\include\cpprest\base_uri.h" />
+    <ClInclude Include="..\source\include\cpprest\containerstream.h" />
+    <ClInclude Include="..\source\include\cpprest\filestream.h" />
+    <ClInclude Include="..\source\include\cpprest\http_headers.h" />
+    <ClInclude Include="..\source\include\cpprest\http_listener.h" />
+    <ClInclude Include="..\source\include\cpprest\http_msg.h" />
+    <ClInclude Include="..\source\include\cpprest\interopstream.h" />
+    <ClInclude Include="..\source\include\cpprest\json.h" />
+    <ClInclude Include="..\source\include\cpprest\oauth1.h" />
+    <ClInclude Include="..\source\include\cpprest\oauth2.h" />
+    <ClInclude Include="..\source\include\cpprest\producerconsumerstream.h" />
+    <ClInclude Include="..\source\include\cpprest\rawptrstream.h" />
+    <ClInclude Include="..\source\include\cpprest\streams.h" />
+    <ClInclude Include="..\source\include\cpprest\uri.h" />
+    <ClInclude Include="..\source\include\cpprest\uri_builder.h" />
+    <ClInclude Include="..\source\include\cpprest\version.h" />
+    <ClInclude Include="..\source\include\cpprest\ws_client.h" />
+    <ClInclude Include="..\source\include\cpprest\ws_msg.h" />
     <ClInclude Include="..\source\include\http_client.h" />
     <ClInclude Include="..\source\src\common\internal_http_helpers.h" />
     <ClInclude Include="..\source\src\common\string_utils.h" />
     <ClInclude Include="..\source\src\http_client_impl.h" />
+    <ClInclude Include="..\source\src\websockets\client\ws_client_impl.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

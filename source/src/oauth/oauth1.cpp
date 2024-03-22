@@ -11,12 +11,12 @@
 * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-//#include "stdafx.h"
+//#include "stdafx.h" -- mrkkrj
+#include "http_client.h"
 #if !defined(_WIN32) || _WIN32_WINNT >= _WIN32_WINNT_VISTA  // OPEN TODO:: ?????
 #include "cpprest/oauth1.h"
 #include <windows.h>
 #endif
-#include "http_client.h"
 
 #if !defined(CPPREST_TARGET_XP)
 

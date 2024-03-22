@@ -2,14 +2,13 @@
 
 arestcli (i.e. Asio REST Client) is a C++ REST client using (non-boost) Asio library underneath.
 
-This is a port of Microsoft's REST-SDK (aka Casablanca) using Asio library instead of boost::Asio!
+This is a port of Microsoft's REST-SDK (aka Casablanca) using Asio library instead of boost::Asio, and also forcing usage of Asio also on Windows.
 
-It was created because BEAST is quite unwieldy (and because it needs th whole of boost!!!). On Windows the usage of Asio is also forced.
-
+It was created because BEAST is quite unwieldy (and because it needs the whole of boost!!!).
 
 ## WIP: 
  - Only some tests on Windows done 
- - Websockets, compression and SLL disabled and not yet tested 
+ - Websockets and compression disabled and not yet tested 
  - Only a VisualStudio 2022 solution provided!!! Only working for Debug build, to boot. :-(
 
 ## Plans: 

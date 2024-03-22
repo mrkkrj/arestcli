@@ -4,16 +4,21 @@
 
 #include <http_client.h>
 #include <cpprest/json.h>
+#include "file_example.cpp"
 
 using namespace web;
 using namespace web::http;
 using namespace web::json;
 
+void print_exception();
+void print_status_code(const http::http_response& http_resp);
+void print_result(const json::value& client_resp, const char* label);
+
 
 int main()
 {
     http::client::http_client clientRestTest(U("http://httpbin.org"));
-    web::json::value client_resp;
+    json::value client_resp;
 
     // 1. use the continuations directly
     try
@@ -23,7 +28,7 @@ int main()
             .then(
                 [](http_response response) 
                 {
-                    std::cout << "response status code:" << response.status_code() << std::endl;
+                    print_status_code(response);
 
                     if (response.status_code() == status_codes::OK)
                     {
@@ -31,46 +36,29 @@ int main()
                     }
                     else
                     {
-                        return pplx::task_from_result(web::json::value());
+                        return pplx::task_from_result(json::value());
                     }
                 })
             .then(
-                [&client_resp](pplx::task<web::json::value> previousTask)
+                [&client_resp](pplx::task<json::value> previousTask)
                 {
                     client_resp = previousTask.get();
                 })
             .wait();
     }
-    catch (web::http::http_exception& exc)
-    {
-        std::cout << "EXIT -- HTTP exception thrown!!!" << std::endl;
-        std::cout << "  txt=" << exc.what() << std::endl;
-        return -1;
-    }
-    catch (web::json::json_exception& exc)
-    {
-        std::cout << "EXIT -- JSON exception thrown!!!" << std::endl;
-        std::cout << "  txt=" << exc.what() << std::endl;
-        return -1;
-    }
     catch (...)
     {
-        std::cout << "EXIT -- unknown exception thrown!!!" << std::endl;
+        print_exception();
         return -1;
     }
 
-    // show:
-    std::wstring respStrg = client_resp.serialize();
-    std::string s1(respStrg.begin(), respStrg.end());
-    std::cout << "response www.httpbin.org/ip ---> " << s1 << "\n\n";
+    print_result(client_resp, "www.httpbin.org/ip");
 
-
-    // 2. just use get()!
+    // 2. just use get() and block!
     try
     {
         auto response = clientRestTest.request(methods::GET, U("/anything")).get();
-        
-        std::cout << "response status code:" << response.status_code() << std::endl;
+        print_status_code(response);
 
         if (response.status_code() == status_codes::OK)
         {
@@ -78,29 +66,99 @@ int main()
         }
         else
         {
-            client_resp = web::json::value();
+            client_resp = json::value();
         }
+    }
+    catch (...)
+    {
+        print_exception();
+        return -1;
+    }
+
+    print_result(client_resp, "www.httpbin.org/anything");
+
+    // 3. HTTPS 
+#if !defined(CPPREST_EXCLUDE_SSL) 
+
+    http::client::http_client_config config;
+    config.set_validate_certificates(false); // just use the tunnel!
+
+    http::client::http_client clientSslTest(U("https://httpbin.org"), config);
+
+    try
+    {
+        auto response = clientSslTest.request(methods::GET, U("headers")).get();
+        print_status_code(response);
+
+        if (response.status_code() == status_codes::OK)
+        {
+            client_resp = response.extract_json().get();
+        }
+        else
+        {
+            client_resp = json::value();
+        }
+    }
+    catch (...)
+    {
+        print_exception();
+        return -1;
+    }
+
+    print_result(client_resp, "www.httpbin.org/headers (SSL)");
+
+#endif
+
+    // 4. file transfer
+    try
+    {
+        filetransfer_test();
+    }
+    catch (...)
+    {
+        print_exception();
+        return -1;
+    }
+}
+
+
+void print_exception()
+{
+    try
+    {
+        throw; // Lippincott pattern 
     }
     catch (web::http::http_exception& exc)
     {
         std::cout << "EXIT -- HTTP exception thrown!!!" << std::endl;
         std::cout << "  txt=" << exc.what() << std::endl;
-        return -1;
     }
-    catch (web::json::json_exception& exc)
+    catch (json::json_exception& exc)
     {
         std::cout << "EXIT -- JSON exception thrown!!!" << std::endl;
         std::cout << "  txt=" << exc.what() << std::endl;
-        return -1;
+    }
+    catch (const std::system_error& exc)
+    {
+        std::cout << "EXIT -- system exception thrown!!!" << std::endl;
+        std::cout << "  txt=" << exc.what() << std::endl;
     }
     catch (...)
     {
-        std::cout << "EXIT -- unknown exception thrown!!!" << std::endl;
-        return -1;
+        std::cout << "EXIT -- exception thrown!!!" << std::endl;
     }
+}
 
-    // show:
-    respStrg = client_resp.serialize();
-    std::string s2(respStrg.begin(), respStrg.end());
-    std::cout << "response www.httpbin.org/anything ---> " << s2 << "\n\n";
+
+void print_result(const json::value& client_resp, const char* label)
+{
+    std::wstring resp = client_resp.serialize();
+    std::string s(resp.begin(), resp.end());
+    std::cout << "response " << label << " ---> " << s << "\n\n";
+}
+
+
+void print_status_code(const http::http_response& http_resp)
+{
+    std::cout << "response status code:" << http_resp.status_code() << std::endl;
 }

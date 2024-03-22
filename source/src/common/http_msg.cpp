@@ -10,7 +10,7 @@
 *
 * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
-//#include "stdafx.h"
+//#include "stdafx.h" -- mrkkrj
 #include "cpprest/http_msg.h"
 #include "cpprest/asyncrt_utils.h"
 #include "cpprest/producerconsumerstream.h"
@@ -1014,7 +1014,7 @@ details::_http_request::_http_request(std::unique_ptr<http::details::_http_serve
 {
 }
 
-// TEST:::
+// mrkkrj
 #if 1
 
 #define _METHODS

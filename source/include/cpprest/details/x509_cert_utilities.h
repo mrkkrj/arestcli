@@ -25,7 +25,7 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-local-typedef"
 #endif
-#include <boost/asio/ssl.hpp>
+#include <asio/ssl.hpp>
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #endif
@@ -42,7 +42,7 @@ namespace web { namespace http { namespace client { namespace details {
 /// <param name="verifyCtx">Boost.ASIO context to get certificate chain from.</param>
 /// <param name="hostName">Host name from the URI.</param>
 /// <returns>True if verification passed and server can be trusted, false otherwise.</returns>
-bool verify_cert_chain_platform_specific(boost::asio::ssl::verify_context &verifyCtx, const std::string &hostName);
+bool verify_cert_chain_platform_specific(asio::ssl::verify_context &verifyCtx, const std::string &hostName);
 
 }}}}
 

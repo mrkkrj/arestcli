@@ -1,0 +1,15 @@
+{
+  "args": {}, 
+  "data": "", 
+  "files": {}, 
+  "form": {}, 
+  "headers": {
+    "Host": "httpbin.org", 
+    "User-Agent": "cpprestsdk/2.9.0", 
+    "X-Amzn-Trace-Id": "Root=1-65fd61b2-391601964269f6fd524fe26b"
+  }, 
+  "json": null, 
+  "method": "GET", 
+  "origin": "80.142.214.17", 
+  "url": "http://httpbin.org/anything"
+}

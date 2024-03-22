@@ -4,10 +4,10 @@
 *
 * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
 **/
-//#include "stdafx.h"
-#define CPPREST_FORCE_HTTP_CLIENT_ASIO // TEST::: !!!!!!!!!!!
+//#include "stdafx.h" -- mrkkrj
+#define CPPREST_FORCE_HTTP_CLIENT_ASIO // mrkkrj !!!!!!!!!!!
 
-#if !defined(CPPREST_EXCLUDE_WEBSOCKETS) || !defined(_WIN32) || defined(CPPREST_FORCE_HTTP_CLIENT_ASIO) // TEST:::
+#if !defined(CPPREST_EXCLUDE_WEBSOCKETS) || !defined(_WIN32) || defined(CPPREST_FORCE_HTTP_CLIENT_ASIO) // mrkkrj
 #include "pplx/threadpool.h"
 
 #if !defined(_WIN32)

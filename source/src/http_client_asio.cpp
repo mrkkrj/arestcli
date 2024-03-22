@@ -13,8 +13,8 @@
 * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-// TEST:::
-//#include "stdafx.h"
+// mrkkrj
+//#include "stdafx.h" -- mrkkrj
 
 #include "cpprest/asyncrt_utils.h"
 #include "./common/internal_http_helpers.h"
@@ -31,11 +31,11 @@
 //#include <boost/bind.hpp>
 
 #include <asio.hpp>
-#if !defined(CPPREST_EXCLUDE_SSL) // TEST:::
+#if !defined(CPPREST_EXCLUDE_SSL) // mrkkrj
 #include <asio/ssl.hpp>
 #endif
 #include <asio/steady_timer.hpp>
-// TEST:::
+// mrkkrj
 //#include <boost/algorithm/string.hpp>
 #include "./common/string_utils.h"
 
@@ -55,9 +55,9 @@
 #include <unordered_set>
 #include <memory>
 
-// TEST:::
+// mrkkrj
 #include <deque>
-// TEST:::
+// mrkkrj
 
 
 using asio::ip::tcp;
@@ -115,7 +115,7 @@ public:
         close();
     }
 
-#if !defined(CPPREST_EXCLUDE_SSL) // TEST:::
+#if !defined(CPPREST_EXCLUDE_SSL) // mrkkrj
     // This simply instantiates the internal state to support ssl. It does not perform the handshake.
     void upgrade_to_ssl(const std::function<void(asio::ssl::context&)>& ssl_context_callback)
     {
@@ -156,7 +156,7 @@ public:
     bool is_reused() const { return m_is_reused; }
     void set_keep_alive(bool keep_alive) { m_keep_alive = keep_alive; }
     bool keep_alive() const { return m_keep_alive; }
-#if !defined(CPPREST_EXCLUDE_SSL) // TEST:::
+#if !defined(CPPREST_EXCLUDE_SSL) // mrkkrj
     bool is_ssl() const { return m_ssl_stream ? true : false; }
 #else
     bool is_ssl() const { return false; }
@@ -175,7 +175,7 @@ public:
         }
     }
 
-#if !defined(CPPREST_EXCLUDE_SSL) // TEST:::
+#if !defined(CPPREST_EXCLUDE_SSL) // mrkkrj
     template <typename HandshakeHandler, typename CertificateHandler>
     void async_handshake(asio::ssl::stream_base::handshake_type type,
                          const http_client_config &config,
@@ -211,7 +211,7 @@ public:
     void async_write(ConstBufferSequence &buffer, const Handler &writeHandler)
     {
         std::lock_guard<std::mutex> lock(m_socket_lock);
-#if !defined(CPPREST_EXCLUDE_SSL) // TEST:::
+#if !defined(CPPREST_EXCLUDE_SSL) // mrkkrj
         if (m_ssl_stream)
         {
             asio::async_write(*m_ssl_stream, buffer, writeHandler);
@@ -227,7 +227,7 @@ public:
     void async_read(MutableBufferSequence &buffer, const CompletionCondition &condition, const Handler &readHandler)
     {
         std::lock_guard<std::mutex> lock(m_socket_lock);
-#if !defined(CPPREST_EXCLUDE_SSL) // TEST:::
+#if !defined(CPPREST_EXCLUDE_SSL) // mrkkrj
         if (m_ssl_stream)
         {
             asio::async_read(*m_ssl_stream, buffer, condition, readHandler);
@@ -243,7 +243,7 @@ public:
     void async_read_until(asio::streambuf &buffer, const std::string &delim, const Handler &readHandler)
     {
         std::lock_guard<std::mutex> lock(m_socket_lock);
-#if !defined(CPPREST_EXCLUDE_SSL) // TEST:::
+#if !defined(CPPREST_EXCLUDE_SSL) // mrkkrj
         if (m_ssl_stream)
         {
             asio::async_read_until(*m_ssl_stream, buffer, delim, readHandler);
@@ -266,7 +266,7 @@ private:
     // as normal message processing.
     std::mutex m_socket_lock;
     tcp::socket m_socket;
-#if !defined(CPPREST_EXCLUDE_SSL) // TEST:::
+#if !defined(CPPREST_EXCLUDE_SSL) // mrkkrj
     std::unique_ptr<asio::ssl::stream<tcp::socket &> > m_ssl_stream;
 #endif
 
@@ -388,10 +388,10 @@ private:
     uint64_t m_prev_epoch = 0;
     bool is_timer_running = false;
     
-    // TEST:::
+    // mrkkrj
     //asio::deadline_timer m_pool_epoch_timer;
     asio::steady_timer m_pool_epoch_timer;
-    // TEST:::
+    // mrkkrj
 };
 
 class asio_client final : public _http_client_communicator
@@ -420,7 +420,7 @@ public:
         {
             // Pool was empty. Create a new connection
             conn = std::make_shared<asio_connection>(crossplat::threadpool::shared_instance().service());
-#if !defined(CPPREST_EXCLUDE_SSL) // TEST:::
+#if !defined(CPPREST_EXCLUDE_SSL) // mrkkrj
             if (m_start_with_ssl)
                 conn->upgrade_to_ssl(this->client_config().get_ssl_context_callback());
 #endif
@@ -595,7 +595,7 @@ public:
                 }
 
                 // OPEN TODO:::
-#if !defined(CPPREST_EXCLUDE_SSL) // TEST:::
+#if !defined(CPPREST_EXCLUDE_SSL) // mrkkrj
                 m_context->m_connection->upgrade_to_ssl(m_context->m_http_client->client_config().get_ssl_context_callback());
 
                 m_ssl_tunnel_established(m_context);
@@ -893,7 +893,7 @@ private:
                     }
                     break;
                 case httpclient_errorcode_context::readheader:
-                    // TEST::: (int)
+                    // mrkkrj (int)
                     if (ec.default_error_condition().value() == (int)std::errc::no_such_file_or_directory) // bug in boost error_code mapping
                     {
                         errorcodeValue = make_error_code(std::errc::connection_aborted).value();
@@ -913,7 +913,7 @@ private:
         {
             write_request();
         }
-        else if (ec.value() == (int)std::errc::operation_canceled || ec.value() == asio::error::operation_aborted) // TEST:::
+        else if (ec.value() == (int)std::errc::operation_canceled || ec.value() == asio::error::operation_aborted) // mrkkrj
         {
             request_context::report_error(ec.value(), "Request canceled by user.");
         }
@@ -949,8 +949,8 @@ private:
 
     void write_request()
     {
+#if !defined(CPPREST_EXCLUDE_SSL) // mrkkrj
         // Only perform handshake if a TLS connection and not being reused.
-#if !defined(CPPREST_EXCLUDE_SSL) // TEST:::
         if (m_connection->is_ssl() && !m_connection->is_reused())
         {
             const auto weakCtx = std::weak_ptr<asio_context>(shared_from_this());
@@ -972,7 +972,7 @@ private:
                                           });
         }
         else
-#endif
+#endif // mrkkrj
         {
             m_connection->async_write(m_body_buf, 
                 std::bind(&asio_context::handle_write_headers, shared_from_this(), std::placeholders::_1 /*asio::placeholders::error*/));
@@ -992,7 +992,7 @@ private:
         }
     }
 
-#if !defined(CPPREST_EXCLUDE_SSL) // TEST:::
+#if !defined(CPPREST_EXCLUDE_SSL) // mrkkrj
     bool handle_cert_verification(bool preverified, asio::ssl::verify_context &verifyCtx)
     {
         // OpenSSL calls the verification callback once per certificate in the chain,
@@ -1705,7 +1705,7 @@ void asio_client::send_request(const std::shared_ptr<request_context> &request_c
 
     try
     {
-#if !defined(CPPREST_EXCLUDE_SSL) // TEST:::
+#if !defined(CPPREST_EXCLUDE_SSL) // mrkkrj
         if (ctx->m_connection->is_ssl())
         {
             client_config().invoke_nativehandle_options(ctx->m_connection->m_ssl_stream.get());

@@ -8,7 +8,7 @@
 *
 * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
-//#include "stdafx.h"
+//#include "stdafx.h" -- mrkkrj
 #include "cpprest/asyncrt_utils.h"
 #include <array>
 

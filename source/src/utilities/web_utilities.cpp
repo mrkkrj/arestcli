@@ -11,7 +11,7 @@
 * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-//#include "stdafx.h"
+//#include "stdafx.h" -- mrkkrj
 
 #include "cpprest/base_uri.h"
 #include "cpprest/details/web_utilities.h"

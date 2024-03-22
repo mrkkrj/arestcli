@@ -13,7 +13,7 @@
 * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-//#include "stdafx.h"
+//#include "stdafx.h" -- mrkkrj
 #include "http_client_impl.h"
 
 #include "cpprest/version.h"

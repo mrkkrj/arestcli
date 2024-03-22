@@ -11,9 +11,9 @@
 * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-//#include "stdafx.h"
+//#include "stdafx.h" -- mrkkrj
 #include "cpprest/asyncrt_utils.h"
-// TEST:::
+// mrkkrj
 #ifdef _WIN32
 #include <windows.h>
 //#include <WinBase.h>

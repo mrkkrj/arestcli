@@ -34,6 +34,15 @@
     <Filter Include="Quelldateien\arestcli\utilities">
       <UniqueIdentifier>{f60a4a3e-0049-4e80-9ccc-78df3f04dd60}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Quelldateien\arestcli\websockets">
+      <UniqueIdentifier>{e056a73d-1b67-4b51-856e-2fbdeedb46f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\arestcli\streams">
+      <UniqueIdentifier>{4ffe745f-1063-4dec-be94-ba82c0d795b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\cpprest">
+      <UniqueIdentifier>{245f0343-0f3b-4183-b4d3-8c0548879f4d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\include\http_client.h">
@@ -47,6 +56,69 @@
     </ClInclude>
     <ClInclude Include="..\source\src\common\internal_http_helpers.h">
       <Filter>Quelldateien\arestcli\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\src\websockets\client\ws_client_impl.h">
+      <Filter>Quelldateien\arestcli\websockets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\include\cpprest\astreambuf.h">
+      <Filter>Headerdateien\cpprest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\include\cpprest\asyncrt_utils.h">
+      <Filter>Headerdateien\cpprest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\include\cpprest\base_uri.h">
+      <Filter>Headerdateien\cpprest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\include\cpprest\containerstream.h">
+      <Filter>Headerdateien\cpprest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\include\cpprest\filestream.h">
+      <Filter>Headerdateien\cpprest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\include\cpprest\http_headers.h">
+      <Filter>Headerdateien\cpprest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\include\cpprest\http_listener.h">
+      <Filter>Headerdateien\cpprest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\include\cpprest\http_msg.h">
+      <Filter>Headerdateien\cpprest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\include\cpprest\interopstream.h">
+      <Filter>Headerdateien\cpprest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\include\cpprest\json.h">
+      <Filter>Headerdateien\cpprest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\include\cpprest\oauth1.h">
+      <Filter>Headerdateien\cpprest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\include\cpprest\oauth2.h">
+      <Filter>Headerdateien\cpprest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\include\cpprest\producerconsumerstream.h">
+      <Filter>Headerdateien\cpprest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\include\cpprest\rawptrstream.h">
+      <Filter>Headerdateien\cpprest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\include\cpprest\streams.h">
+      <Filter>Headerdateien\cpprest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\include\cpprest\uri.h">
+      <Filter>Headerdateien\cpprest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\include\cpprest\uri_builder.h">
+      <Filter>Headerdateien\cpprest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\include\cpprest\version.h">
+      <Filter>Headerdateien\cpprest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\include\cpprest\ws_client.h">
+      <Filter>Headerdateien\cpprest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\include\cpprest\ws_msg.h">
+      <Filter>Headerdateien\cpprest</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -103,6 +175,18 @@
     </ClCompile>
     <ClCompile Include="..\source\src\oauth\oauth2.cpp">
       <Filter>Quelldateien\arestcli\oauth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\src\websockets\client\ws_client.cpp">
+      <Filter>Quelldateien\arestcli\websockets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\src\websockets\client\ws_client_wspp.cpp">
+      <Filter>Quelldateien\arestcli\websockets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\src\websockets\client\ws_msg.cpp">
+      <Filter>Quelldateien\arestcli\websockets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\src\streams\fileio_posix.cpp">
+      <Filter>Quelldateien\arestcli\streams</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

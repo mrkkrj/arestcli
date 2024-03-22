@@ -10,7 +10,7 @@
 *
 * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
-//#include "stdafx.h"
+//#include "stdafx.h" -- mrkkrj
 #include "./common/internal_http_helpers.h"
 
 namespace web { namespace http

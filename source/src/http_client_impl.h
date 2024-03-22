@@ -82,7 +82,7 @@ public:
     utility::size64_t m_uploaded;
     utility::size64_t m_downloaded;
 
-    // TEST:::::
+    // mrkkrj::
 #if 1
     // task completion event to signal request is completed.
     pplx::task_completion_event<http_response> m_request_completion;
@@ -90,7 +90,7 @@ public:
     // Registration for cancellation notification if enabled.
     pplx::cancellation_token_registration m_cancellationRegistration;
 #endif
-    // TEST:::
+    // mrkkrj
 
 protected:
 

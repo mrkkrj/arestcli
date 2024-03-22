@@ -11,7 +11,7 @@
 * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-//#include "stdafx.h"
+//#include "stdafx.h" -- mrkkrj
 #include "cpprest/oauth2.h"
 #include "http_client.h"
 
