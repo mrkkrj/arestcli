@@ -1,3 +1,6 @@
+//
+// some utilities to replace boost (mrkkrj)
+//
 
 #include <algorithm> 
 #include <cctype>
@@ -61,5 +64,16 @@ namespace utilities
             });
     }
 
+#if 0
+    template <class StringT1>
+    bool iequals(const StringT1& a, const char* b)
+    {
+        return std::equal(std::begin(a), std::end(a),
+            b, b + strlen(b) - 1, // OPEN TODO::: hack!!!
+            [](char a, char b) {
+                return tolower(a) == tolower(b);
+            });
+    }
+#endif
 
 }

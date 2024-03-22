@@ -142,6 +142,14 @@ public:
 #undef DAT
 };
 
+// mrkkrj
+class header_values
+{
+public:
+    _ASYNCRTIMP const static utility::string_t chunked;
+    _ASYNCRTIMP const static utility::string_t close;
+};
+
 /// <summary>
 /// Represents an HTTP error. This class holds an error message and an optional error code.
 /// </summary>

@@ -715,7 +715,9 @@ namespace streams
         streambuf_state_manager(std::ios_base::openmode mode)
         {
             m_stream_can_read = (mode & std::ios_base::in) != 0;
-            m_stream_can_write = (mode & std::ios_base::out) != 0;
+            m_stream_can_write = (mode & std::ios_base::out) != 0 
+                                 // || (mode & std::ios_base::trunc) != 0; // mrkkrj
+                                 ; // OPEN TODO::: not yet working!!!! mrkkrj
             m_stream_read_eof = false;
             m_alloced = false;
         }

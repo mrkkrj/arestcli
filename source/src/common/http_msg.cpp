@@ -1014,8 +1014,6 @@ details::_http_request::_http_request(std::unique_ptr<http::details::_http_serve
 {
 }
 
-// mrkkrj
-#if 1
 
 #define _METHODS
 #define DAT(a,b) const method methods::a = b;
@@ -1028,6 +1026,10 @@ details::_http_request::_http_request(std::unique_ptr<http::details::_http_serve
 #include "cpprest/details/http_constants.dat"
 #undef _HEADER_NAMES
 #undef DAT
+
+// mrkkrj - OPEN TODO:: use the .dat file?
+const utility::string_t header_values::chunked = _XPLATSTR("chunked");
+const utility::string_t header_values::close = _XPLATSTR("close");
 
 #define _MIME_TYPES
 #define DAT(a,b) const utility::string_t mime_types::a = _XPLATSTR(b);
@@ -1050,6 +1052,5 @@ details::_http_request::_http_request(std::unique_ptr<http::details::_http_serve
 #undef DAT
 #endif
 
-#endif
 
 }} // namespace web::http

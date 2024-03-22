@@ -80,10 +80,10 @@ int main()
     // 3. HTTPS 
 #if !defined(CPPREST_EXCLUDE_SSL) 
 
-    http::client::http_client_config config;
-    config.set_validate_certificates(false); // just use the tunnel!
+    http::client::http_client_config config_ssl;
+    config_ssl.set_validate_certificates(false); // just use the tunnel!
 
-    http::client::http_client clientSslTest(U("https://httpbin.org"), config);
+    http::client::http_client clientSslTest(U("https://httpbin.org"), config_ssl);
 
     try
     {
@@ -141,6 +141,11 @@ void print_exception()
     catch (const std::system_error& exc)
     {
         std::cout << "EXIT -- system exception thrown!!!" << std::endl;
+        std::cout << "  txt=" << exc.what() << std::endl;
+    }
+    catch (const std::exception& exc)
+    {
+        std::cout << "EXIT -- std::exception thrown!!!" << std::endl;
         std::cout << "  txt=" << exc.what() << std::endl;
     }
     catch (...)

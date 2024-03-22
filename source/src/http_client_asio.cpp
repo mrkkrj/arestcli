@@ -1251,23 +1251,21 @@ private:
             {
                 auto name = header.substr(0, colon);
                 auto value = header.substr(colon + 1, header.size() - colon - 2);
-                //boost::algorithm::trim(name);
-                //boost::algorithm::trim(value);
-                utilities::trim(name);
-                utilities::trim(value);
+                /*boost::algorithm*/utilities::trim(name);  // mrkkrj
+                /*boost::algorithm*/utilities::trim(value); // mrkkrj
 
-                if (/*boost::*/utilities::iequals(name, header_names::transfer_encoding))
-                {
-                    needChunked = /*boost::*/utilities::iequals(value, U("chunked"));
+                if (/*boost::*/utilities::iequals(name, header_names::transfer_encoding)) // mrkkrj
+                {                    
+                    needChunked = /*boost::*/utilities::iequals(value, header_values::chunked);
                 }
 
-                if (/*boost::*/utilities::iequals(name, header_names::connection))
+                if (/*boost::*/utilities::iequals(name, header_names::connection)) // mrkkrj
                 {
                     // This assumes server uses HTTP/1.1 so that 'Keep-Alive' is the default,
                     // so connection is explicitly closed only if we get "Connection: close".
                     // We don't handle HTTP/1.0 server here. HTTP/1.0 server would need
                     // to respond using 'Connection: Keep-Alive' every time.
-                    m_connection->set_keep_alive(!/*boost::*/utilities::iequals(value, U("close")));
+                    m_connection->set_keep_alive(!/*boost::*/utilities::iequals(value, header_values::close)); // mrkkrj
                 }
 
                 m_response.headers().add(utility::conversions::to_string_t(std::move(name)), utility::conversions::to_string_t(std::move(value)));

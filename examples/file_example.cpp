@@ -13,24 +13,67 @@ using namespace web::http::client;
 using namespace concurrency::streams;
 
 
+void fetch_to_file(const string_t& server_url, const string_t& server_resource, const string_t& file_path, int file_mode);
+
+
 void filetransfer_test()
 {
-    // 1.
+    // 1. simple                      
+    fetch_to_file(U("http://httpbin.org"), U("/anything"), U("./rest_test.out"), std::ios::out);
+    printf("File stream test (basic) OK!\n\n");
+
+    // 2. overwrite file    
+    // OPEN TODO::: overwriting not yet working! Bug in Casablanca as it seems...
+#if 0       
+    fetch_to_file(U("http://httpbin.org"), U("/anything"), U("./rest_test.out"), std::ios::trunc);
+    printf("File stream test (overwrite) OK!\n\n");
+#endif
+
+    // 3. HTTPS
+#if !defined(CPPREST_EXCLUDE_SSL) 
+    fetch_to_file(U("https://httpbin.org"), U("/anything"), U("./rest_test.out"), std::ios::out);
+    printf("File stream test (https) OK!\n\n");  
+#endif
+
+    // 4. chunked transfer encoding
+    fetch_to_file(U("http://www.bing.com"), U("/search?q=mrkkrj"), U("./rest_test.out"), std::ios::out);
+    printf("File stream test (chunked) OK!\n\n");
+
+
+    // OPEN TODO:: long binary file...
+    
+    // ...
+}
+
+
+void fetch_to_file(
+    const string_t& server_url, 
+    const string_t& server_resource, 
+    const string_t& file_path, 
+    int file_mode)
+{
     auto fileBuffer = std::make_shared<streambuf<uint8_t>>();
-    file_buffer<uint8_t>::open(U("./rest_test.out"), std::ios::out)
+
+    file_buffer<uint8_t>::open(file_path, file_mode)
         .then(
             [=](streambuf<uint8_t> outFile) -> pplx::task<http_response>
             {
-                *fileBuffer = outFile;
-                http_client client(U("http://httpbin.org"));
+                http_client_config config;
 
-                return client.request(methods::GET, U("/anything"));
+                if (server_url.starts_with(U("https:")))
+                {   
+                    config.set_validate_certificates(false); // just use the tunnel!
+                }
+
+                http_client client(server_url, config);
+                *fileBuffer = outFile;
+
+                return client.request(methods::GET, server_resource);
             })
         .then(
             [=](http_response response) -> pplx::task<size_t>
             {
                 printf("Response status code: %u.\n", response.status_code());
-
                 return response.body().read_to_end(*fileBuffer);
             })
         .then(
@@ -41,48 +84,5 @@ void filetransfer_test()
                 return fileBuffer->close();
             })
         .wait();
-
-                    
-    printf("File stream test OK!\n");
-    return;
-
-    // OPEN TODO:: https
-    // OPEN TODO:: overwrite file
-    // OPEN TODO:: long file...
-    // OPEN TODO::: bing --- not yet working!
-#if 0
-    // 2.
-    const string_t searchTerm = U("mrkkrj");
-    const string_t outputFileName = U("./rest_test.out");
-
-    // Open a stream to the file to write the HTTP response body into.
-    auto fileBuffer = std::make_shared<streambuf<uint8_t>>();
-    file_buffer<uint8_t>::open(outputFileName, std::ios::out)
-        .then(
-            [=](streambuf<uint8_t> outFile) -> pplx::task<http_response>
-            {
-                *fileBuffer = outFile;
-                http_client client(U("http://www.bing.com/"));
-
-                return client.request(methods::GET, uri_builder(U("/search")).append_query(U("q"), searchTerm).to_string());
-            })
-        .then(
-            [=](http_response response) -> pplx::task<size_t>
-            {
-                printf("Response status code %u returned.\n", response.status_code());
-
-                return response.body().read_to_end(*fileBuffer);
-            })
-        .then(
-            [=](size_t n)
-            {
-                printf("Received %d bytes.\n", n);
-
-                return fileBuffer->close();
-            })
-        .wait();
-
-     printf("File stream tests OK!\n");
-#endif
 }
 
