@@ -6,6 +6,8 @@ This is a port of Microsoft's REST-SDK (aka Casablanca) using Asio library inste
 
 It was created because BEAST is quite unwieldy (and because it needs the whole of boost!!!).
 
+![testing arestcli](./arestcli-test.jpg)
+
 ## WIP: 
  - Only some tests on Windows done 
  - Websockets and compression disabled and not yet tested 
