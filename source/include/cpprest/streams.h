@@ -946,9 +946,9 @@ namespace Concurrency { namespace streams
         pplx::task<size_t> read_to_end(streams::streambuf<CharType> target) const
         {
             pplx::task<size_t> result;
-            if ( !_verify_and_return_task("stream not set up for output of data", result) ) return result;
-            if ( !target.can_write() )
-                return pplx::task_from_exception<size_t>(std::make_exception_ptr(std::runtime_error("source buffer not set up for input of data")));
+            if (!_verify_and_return_task(details::_in_stream_msg, result)) return result;
+            if (!target.can_write())
+                return pplx::task_from_exception<size_t>(std::make_exception_ptr(std::runtime_error("target not set up for output of data")));
 
             auto l_buffer = helper()->m_buffer;
             auto l_buf_size = this->buf_size;

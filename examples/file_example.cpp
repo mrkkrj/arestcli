@@ -22,11 +22,17 @@ void filetransfer_test()
     fetch_to_file(U("http://httpbin.org"), U("/anything"), U("./rest_test.out"), std::ios::out);
     printf("File stream test (basic) OK!\n\n");
 
-    // 2. overwrite file        
+    // 2. HTTPS
+#if !defined(CPPREST_EXCLUDE_SSL) 
+    fetch_to_file(U("https://httpbin.org"), U("/anything"), U("./rest_test.out"), std::ios::out);
+    printf("File stream test (https) OK!\n\n");
+#endif
+
+    // 3. overwrite file        
     fetch_to_file(U("http://httpbin.org"), U("/anything"), U("./rest_test.out"), std::ios::out | std::ios::trunc);
     printf("File stream test (file overwrite) OK!\n\n");
 
-    // 2a. error case, file read only
+    // 3a. error case, file read only
     try
     {
         fetch_to_file(U("http://httpbin.org"), U("/anything"), U("./rest_test.out"), /*std::ios::out |*/ std::ios::trunc);
@@ -34,24 +40,14 @@ void filetransfer_test()
     }
     catch (const std::runtime_error& exc)
     {
-        // OPEN TODO:: 
-        //   --->>> not yet working!!! Wrong error message !!!
-#if 0
-        if (exc.what() != std::string("stream buffer not set up for output of data"))
+        if (exc.what() != std::string("target not set up for output of data"))
         {
-            std::cout << "ERROR -- runtime exception NEQ \"stream buffer not set up for output of data\"!!!" << std::endl;
+            std::cout << "ERROR -- runtime exception NEQ \"target not set up for output of data\"!!!" << std::endl;
             std::cout << "  txt=" << exc.what() << std::endl;
             return;
         }
-#endif
     }
     printf("File stream test (file r/o error) OK!\n\n");
-
-    // 3. HTTPS
-#if !defined(CPPREST_EXCLUDE_SSL) 
-    fetch_to_file(U("https://httpbin.org"), U("/anything"), U("./rest_test.out"), std::ios::out);
-    printf("File stream test (https) OK!\n\n");  
-#endif
 
     // 4. chunked transfer encoding
     fetch_to_file(U("http://www.bing.com"), U("/search?q=mrkkrj"), U("./rest_test.out"), std::ios::out);
@@ -105,7 +101,7 @@ void fetch_to_file(
         .then(
             [=](size_t n)
             {
-                printf("Received %d bytes.\n", n);
+                printf("Received %zd bytes.\n", n);
 
                 return fileBuffer->close();
             })

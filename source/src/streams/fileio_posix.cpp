@@ -294,7 +294,7 @@ size_t _write_file_async(Concurrency::streams::details::_file_info_impl *fInfo, 
             lseek(fInfo->m_handle, orig_pos, SEEK_SET);
         }
 
-        if (bytes_written != -1) // mrkkrj - TEST::: callback deleted in on_error() !!!!
+        if (bytes_written != -1) // mrkkrj - callback deleted in on_error()!
         {
             callback->on_completed(bytes_written);
         }
