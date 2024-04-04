@@ -43,8 +43,12 @@
 #include <websocketpp/common/functional.hpp>
 #include <websocketpp/common/connection_hdl.hpp>
 
-#include <boost/asio.hpp>
-#include <boost/system/error_code.hpp>
+// mrkkrj
+//#include <boost/asio.hpp>
+//#include <boost/system/error_code.hpp>
+#include <asio.hpp>
+// TEST:::
+//#include <asio/io_context_strand.hpp>
 
 #include <istream>
 #include <sstream>
@@ -86,11 +90,12 @@ public:
     typedef typename response_type::ptr response_ptr;
 
     /// Type of a pointer to the ASIO io_service being used
-    typedef boost::asio::io_service* io_service_ptr;
+    typedef ::asio::io_service* io_service_ptr;
     /// Type of a pointer to the ASIO io_service::strand being used
-    typedef lib::shared_ptr<boost::asio::io_service::strand> strand_ptr;
+    typedef lib::shared_ptr<::asio::io_service::strand> strand_ptr;
     /// Type of a pointer to the ASIO timer class
-    typedef lib::shared_ptr<boost::asio::deadline_timer> timer_ptr;
+    //typedef lib::shared_ptr<::asio::deadline_timer> timer_ptr; --- mrkkrj
+    typedef lib::shared_ptr<::asio::steady_timer> timer_ptr;    
 
     // connection is friends with its associated endpoint to allow the endpoint
     // to call private/protected utility methods that we don't want to expose
@@ -295,10 +300,18 @@ public:
      * needed.
      */
     timer_ptr set_timer(long duration, timer_handler callback) {
-        timer_ptr new_timer = lib::make_shared<boost::asio::deadline_timer>(
+#if 0
+        timer_ptr new_timer = lib::make_shared<::asio::steady_timer>( // mrkkrj
             lib::ref(*m_io_service),
-            boost::posix_time::milliseconds(duration)
+            std::chrono::milliseconds(duration) // mrkkrj
         );
+#else
+        // mrkkrj
+        timer_ptr new_timer = lib::make_shared<::asio::steady_timer>( // mrkkrj
+            m_io_service->get_executor(),
+            std::chrono::milliseconds(duration) // mrkkrj
+        );
+#endif
 
         if (config::enable_multithreading) {
             new_timer->async_wait(m_strand->wrap(lib::bind(
@@ -331,10 +344,10 @@ public:
      * @param ec The status code
      */
     void handle_timer(timer_ptr, timer_handler callback,
-        boost::system::error_code const & ec)
+         std::error_code const & ec)
     {
         if (ec) {
-            if (ec == boost::asio::error::operation_aborted) {
+            if (ec == ::asio::error::operation_aborted) {
                 callback(make_error_code(transport::error::operation_aborted));
             } else {
                 log_err(log::elevel::info,"asio handle_timer",ec);
@@ -353,7 +366,7 @@ protected:
     /// Initialize transport for reading
     /**
      * init_asio is called once immediately after construction to initialize
-     * boost::asio components to the io_service
+     * ::asio components to the io_service
      *
      * The transport initialization sequence consists of the following steps:
      * - Pre-init: the underlying socket is initialized to the point where
@@ -411,7 +424,7 @@ protected:
     /// Finish constructing the transport
     /**
      * init_asio is called once immediately after construction to initialize
-     * boost::asio components to the io_service.
+     * ::asio components to the io_service.
      *
      * @param io_service A pointer to the io_service to register with this
      * connection
@@ -422,8 +435,23 @@ protected:
         m_io_service = io_service;
 
         if (config::enable_multithreading) {
-            m_strand = lib::make_shared<boost::asio::strand>(
+            // mrkkrj ---
+#if 0
+            // ORIGINAL:
+            m_strand = lib::make_shared<::asio::strand>(
+                lib::ref(*io_service)); 
+#else
+            // OPEN TODO:::
+            //auto strand = new ::asio::io_service::strand(*io_service);
+
+            m_strand = lib::make_shared<::asio::io_service::strand>(
                 lib::ref(*io_service));
+
+            //m_strand = lib::make_shared<::asio::strand>(
+            //    io_service->get_executor());
+
+            //auto strand = new ::asio::strand(io_service);
+#endif
 
             m_async_read_handler = m_strand->wrap(lib::bind(
                 &type::handle_async_read, get_shared(),lib::placeholders::_1,
@@ -555,7 +583,7 @@ protected:
         lib::error_code const & ec)
     {
         if (ec == transport::error::operation_aborted ||
-            (post_timer && post_timer->expires_from_now().is_negative()))
+            (post_timer && post_timer->expires_from_now().count() < 0 /*.is_negative()*/)) // mrkkrj
         {
             m_alog.write(log::alevel::devel,"post_init cancelled");
             return;
@@ -590,7 +618,7 @@ protected:
 
         m_proxy_data->write_buf = m_proxy_data->req.raw();
 
-        m_bufs.push_back(boost::asio::buffer(m_proxy_data->write_buf.data(),
+        m_bufs.push_back(::asio::buffer(m_proxy_data->write_buf.data(),
                                              m_proxy_data->write_buf.size()));
 
         m_alog.write(log::alevel::devel,m_proxy_data->write_buf);
@@ -608,7 +636,7 @@ protected:
 
         // Send proxy request
         if (config::enable_multithreading) {
-            boost::asio::async_write(
+            ::asio::async_write(
                 socket_con_type::get_next_layer(),
                 m_bufs,
                 m_strand->wrap(lib::bind(
@@ -618,7 +646,7 @@ protected:
                 ))
             );
         } else {
-            boost::asio::async_write(
+            ::asio::async_write(
                 socket_con_type::get_next_layer(),
                 m_bufs,
                 lib::bind(
@@ -648,7 +676,7 @@ protected:
     }
 
     void handle_proxy_write(init_handler callback,
-        boost::system::error_code const & ec)
+         std::error_code const & ec)
     {
         if (m_alog.static_test(log::alevel::devel)) {
             m_alog.write(log::alevel::devel,
@@ -660,8 +688,8 @@ protected:
         // Timer expired or the operation was aborted for some reason.
         // Whatever aborted it will be issuing the callback so we are safe to
         // return
-        if (ec == boost::asio::error::operation_aborted ||
-            m_proxy_data->timer->expires_from_now().is_negative())
+        if (ec == ::asio::error::operation_aborted ||
+            m_proxy_data->timer->expires_from_now().count() < 0 /*.is_negative()*/) // mrkkrj
         {
             m_elog.write(log::elevel::devel,"write operation aborted");
             return;
@@ -691,7 +719,7 @@ protected:
         }
 
         if (config::enable_multithreading) {
-            boost::asio::async_read_until(
+            ::asio::async_read_until(
                 socket_con_type::get_next_layer(),
                 m_proxy_data->read_buf,
                 "\r\n\r\n",
@@ -702,7 +730,7 @@ protected:
                 ))
             );
         } else {
-            boost::asio::async_read_until(
+            ::asio::async_read_until(
                 socket_con_type::get_next_layer(),
                 m_proxy_data->read_buf,
                 "\r\n\r\n",
@@ -722,7 +750,7 @@ protected:
      * @param bytes_transferred The number of bytes read
      */
     void handle_proxy_read(init_handler callback,
-        boost::system::error_code const & ec, size_t)
+         std::error_code const & ec, size_t)
     {
         if (m_alog.static_test(log::alevel::devel)) {
             m_alog.write(log::alevel::devel,
@@ -732,8 +760,8 @@ protected:
         // Timer expired or the operation was aborted for some reason.
         // Whatever aborted it will be issuing the callback so we are safe to
         // return
-        if (ec == boost::asio::error::operation_aborted ||
-            m_proxy_data->timer->expires_from_now().is_negative())
+        if (ec == ::asio::error::operation_aborted ||
+            m_proxy_data->timer->expires_from_now().count() < 0 /*.is_negative()*/) // mrkkrj
         {
             m_elog.write(log::elevel::devel,"read operation aborted");
             return;
@@ -836,10 +864,10 @@ protected:
                 "asio con async_read_at_least called with bad handler");
         }
 
-        boost::asio::async_read(
+        ::asio::async_read(
             socket_con_type::get_socket(),
-            boost::asio::buffer(buf,len),
-            boost::asio::transfer_at_least(num_bytes),
+            ::asio::buffer(buf,len),
+            ::asio::transfer_at_least(num_bytes),
             make_custom_alloc_handler(
                 m_read_handler_allocator,
                 m_async_read_handler
@@ -847,14 +875,14 @@ protected:
         );
     }
 
-    void handle_async_read(boost::system::error_code const & ec,
+    void handle_async_read( std::error_code const & ec,
         size_t bytes_transferred)
     {
         m_alog.write(log::alevel::devel, "asio con handle_async_read");
 
         // translate boost error codes into more lib::error_codes
         lib::error_code tec;
-        if (ec == boost::asio::error::eof) {
+        if (ec == ::asio::error::eof) {
             tec = make_error_code(transport::error::eof);
         } else if (ec) {
             // We don't know much more about the error at this point. As our
@@ -890,11 +918,11 @@ protected:
             return;
         }
 
-        m_bufs.push_back(boost::asio::buffer(buf,len));
+        m_bufs.push_back(::asio::buffer(buf,len));
 
         m_write_handler = handler;
 
-        boost::asio::async_write(
+        ::asio::async_write(
             socket_con_type::get_socket(),
             m_bufs,
             make_custom_alloc_handler(
@@ -914,12 +942,12 @@ protected:
         std::vector<buffer>::const_iterator it;
 
         for (it = bufs.begin(); it != bufs.end(); ++it) {
-            m_bufs.push_back(boost::asio::buffer((*it).buf,(*it).len));
+            m_bufs.push_back(::asio::buffer((*it).buf,(*it).len));
         }
 
         m_write_handler = handler;
 
-        boost::asio::async_write(
+        ::asio::async_write(
             socket_con_type::get_socket(),
             m_bufs,
             make_custom_alloc_handler(
@@ -934,7 +962,7 @@ protected:
      * @param ec The status code
      * @param bytes_transferred The number of bytes read
      */
-    void handle_async_write(boost::system::error_code const & ec, size_t) {
+    void handle_async_write( std::error_code const & ec, size_t) {
         m_bufs.clear();
         lib::error_code tec;
         if (ec) {
@@ -1061,10 +1089,10 @@ protected:
     }
 
     void handle_async_shutdown(timer_ptr shutdown_timer, shutdown_handler
-        callback, boost::system::error_code const & ec)
+        callback,  std::error_code const & ec)
     {
-        if (ec == boost::asio::error::operation_aborted ||
-            shutdown_timer->expires_from_now().is_negative())
+        if (ec == ::asio::error::operation_aborted ||
+            shutdown_timer->expires_from_now().count() < 0 /*.is_negative()*/) // mrkkrj
         {
             m_alog.write(log::alevel::devel,"async_shutdown cancelled");
             return;
@@ -1074,7 +1102,7 @@ protected:
 
         lib::error_code tec;
         if (ec) {
-            if (ec == boost::asio::error::not_connected) {
+            if (ec == ::asio::error::not_connected) {
                 // The socket was already closed when we tried to close it. This
                 // happens periodically (usually if a read or write fails
                 // earlier and if it is a real error will be caught at another
@@ -1124,7 +1152,7 @@ private:
         request_type req;
         response_type res;
         std::string write_buf;
-        boost::asio::streambuf read_buf;
+        ::asio::streambuf read_buf;
         long timeout_proxy;
         timer_ptr timer;
     };
@@ -1137,7 +1165,7 @@ private:
     strand_ptr      m_strand;
     connection_hdl  m_connection_hdl;
 
-    std::vector<boost::asio::const_buffer> m_bufs;
+    std::vector<::asio::const_buffer> m_bufs;
 
     // Handlers
     tcp_init_handler    m_tcp_pre_init_handler;

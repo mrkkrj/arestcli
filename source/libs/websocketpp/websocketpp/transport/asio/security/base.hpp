@@ -34,7 +34,9 @@
 #include <websocketpp/common/cpp11.hpp>
 #include <websocketpp/common/connection_hdl.hpp>
 
-#include <boost/asio.hpp>
+// mrkkrj
+//#include <boost/asio.hpp>
+//#include <asio.hpp>
 
 #include <string>
 

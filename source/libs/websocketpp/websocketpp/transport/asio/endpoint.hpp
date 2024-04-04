@@ -37,9 +37,11 @@
 
 #include <websocketpp/common/functional.hpp>
 
-#include <boost/asio.hpp>
-#include <boost/bind.hpp>
-#include <boost/system/error_code.hpp>
+// mrkkrj
+//#include <boost/asio.hpp>
+//#include <boost/bind.hpp>
+//#include <boost/system/error_code.hpp>
+#include <asio.hpp>
 
 #include <sstream>
 #include <string>
@@ -81,15 +83,15 @@ public:
     typedef typename transport_con_type::ptr transport_con_ptr;
 
     /// Type of a pointer to the ASIO io_service being used
-    typedef boost::asio::io_service* io_service_ptr;
+    typedef ::asio::io_service* io_service_ptr;
     /// Type of a shared pointer to the acceptor being used
-    typedef lib::shared_ptr<boost::asio::ip::tcp::acceptor> acceptor_ptr;
+    typedef lib::shared_ptr<::asio::ip::tcp::acceptor> acceptor_ptr;
     /// Type of a shared pointer to the resolver being used
-    typedef lib::shared_ptr<boost::asio::ip::tcp::resolver> resolver_ptr;
+    typedef lib::shared_ptr<::asio::ip::tcp::resolver> resolver_ptr;
     /// Type of timer handle
-    typedef lib::shared_ptr<boost::asio::deadline_timer> timer_ptr;
+    typedef lib::shared_ptr<::asio::steady_timer> timer_ptr; // mrkkrj
     /// Type of a shared pointer to an io_service work object
-    typedef lib::shared_ptr<boost::asio::io_service::work> work_ptr;
+    typedef lib::shared_ptr<::asio::io_service::work> work_ptr;
 
     // generate and manage our own io_service
     explicit endpoint()
@@ -128,7 +130,7 @@ public:
       : m_io_service(src.m_io_service)
       , m_external_io_service(src.m_external_io_service)
       , m_acceptor(src.m_acceptor)
-      , m_listen_backlog(boost::asio::socket_base::max_connections)
+      , m_listen_backlog(asio::socket_base::max_connections)
       , m_reuse_addr(src.m_reuse_addr)
       , m_state(src.m_state)
     {
@@ -150,7 +152,7 @@ public:
             rhs.m_io_service = NULL;
             rhs.m_external_io_service = false;
             rhs.m_acceptor = NULL;
-            rhs.m_listen_backlog = boost::asio::socket_base::max_connections;
+            rhs.m_listen_backlog = asio::socket_base::max_connections;
             rhs.m_state = UNINITIALIZED;
         }
         return *this;
@@ -183,8 +185,15 @@ public:
 
         m_io_service = ptr;
         m_external_io_service = true;
-        m_acceptor = lib::make_shared<boost::asio::ip::tcp::acceptor>(
+
+#if 0
+        m_acceptor = lib::make_shared<::asio::ip::tcp::acceptor>(
             lib::ref(*m_io_service));
+#else
+        // mrkkrj
+        m_acceptor = lib::make_shared<::asio::ip::tcp::acceptor>(
+            m_io_service->get_executor());
+#endif
 
         m_state = READY;
         ec = lib::error_code();
@@ -214,7 +223,7 @@ public:
      * @param ec Set to indicate what error occurred, if any.
      */
     void init_asio(lib::error_code & ec) {
-        init_asio(new boost::asio::io_service(), ec);
+        init_asio(new ::asio::io_service(), ec);
         m_external_io_service = false;
     }
 
@@ -226,7 +235,7 @@ public:
      * @see init_asio(io_service_ptr ptr)
      */
     void init_asio() {
-        init_asio(new boost::asio::io_service());
+        init_asio(new ::asio::io_service());
         m_external_io_service = false;
     }
 
@@ -325,7 +334,7 @@ public:
      *
      * @return A reference to the endpoint's io_service
      */
-    boost::asio::io_service & get_io_service() {
+    ::asio::io_service & get_io_service() {
         return *m_io_service;
     }
 
@@ -337,7 +346,7 @@ public:
      * @param ep An endpoint to read settings from
      * @param ec Set to indicate what error occurred, if any.
      */
-    void listen(boost::asio::ip::tcp::endpoint const & ep, lib::error_code & ec)
+    void listen(::asio::ip::tcp::endpoint const & ep, lib::error_code & ec)
     {
         if (m_state != READY) {
             m_elog->write(log::elevel::library,
@@ -349,11 +358,11 @@ public:
 
         m_alog->write(log::alevel::devel,"asio::listen");
 
-        boost::system::error_code bec;
+        std::error_code bec;
 
         m_acceptor->open(ep.protocol(),bec);
         if (!bec) {
-            m_acceptor->set_option(boost::asio::socket_base::reuse_address(m_reuse_addr),bec);
+            m_acceptor->set_option(::asio::socket_base::reuse_address(m_reuse_addr),bec);
         }
         if (!bec) {
             m_acceptor->bind(ep,bec);
@@ -379,7 +388,7 @@ public:
      *
      * @param ep An endpoint to read settings from
      */
-    void listen(boost::asio::ip::tcp::endpoint const & ep) {
+    void listen(::asio::ip::tcp::endpoint const & ep) {
         lib::error_code ec;
         listen(ep,ec);
         if (ec) { throw exception(ec); }
@@ -392,8 +401,8 @@ public:
      * listening.
      *
      * Common options include:
-     * - IPv6 with mapped IPv4 for dual stack hosts boost::asio::ip::tcp::v6()
-     * - IPv4 only: boost::asio::ip::tcp::v4()
+     * - IPv6 with mapped IPv4 for dual stack hosts asio::ip::tcp::v6()
+     * - IPv4 only: asio::ip::tcp::v4()
      *
      * @param internet_protocol The internet protocol to use.
      * @param port The port to listen on.
@@ -403,7 +412,7 @@ public:
     void listen(InternetProtocol const & internet_protocol, uint16_t port,
         lib::error_code & ec)
     {
-        boost::asio::ip::tcp::endpoint ep(internet_protocol, port);
+        ::asio::ip::tcp::endpoint ep(internet_protocol, port);
         listen(ep,ec);
     }
 
@@ -414,8 +423,8 @@ public:
      * listening.
      *
      * Common options include:
-     * - IPv6 with mapped IPv4 for dual stack hosts boost::asio::ip::tcp::v6()
-     * - IPv4 only: boost::asio::ip::tcp::v4()
+     * - IPv6 with mapped IPv4 for dual stack hosts asio::ip::tcp::v6()
+     * - IPv4 only: asio::ip::tcp::v4()
      *
      * @param internet_protocol The internet protocol to use.
      * @param port The port to listen on.
@@ -423,7 +432,7 @@ public:
     template <typename InternetProtocol>
     void listen(InternetProtocol const & internet_protocol, uint16_t port)
     {
-        boost::asio::ip::tcp::endpoint ep(internet_protocol, port);
+        ::asio::ip::tcp::endpoint ep(internet_protocol, port);
         listen(ep);
     }
 
@@ -440,7 +449,7 @@ public:
      * @param ec Set to indicate what error occurred, if any.
      */
     void listen(uint16_t port, lib::error_code & ec) {
-        listen(boost::asio::ip::tcp::v6(), port, ec);
+        listen(::asio::ip::tcp::v6(), port, ec);
     }
 
     /// Set up endpoint for listening on a port
@@ -456,7 +465,7 @@ public:
      * @param ec Set to indicate what error occurred, if any.
      */
     void listen(uint16_t port) {
-        listen(boost::asio::ip::tcp::v6(), port);
+        listen(::asio::ip::tcp::v6(), port);
     }
 
     /// Set up endpoint for listening on a host and service (exception free)
@@ -478,8 +487,14 @@ public:
     void listen(std::string const & host, std::string const & service,
         lib::error_code & ec)
     {
-        using boost::asio::ip::tcp;
+        using ::asio::ip::tcp;
+#if 0        
         tcp::resolver r(*m_io_service);
+#else
+        // mrkkrj
+        tcp::resolver r(m_io_service->get_executor());
+#endif
+
         tcp::resolver::query query(host, service);
         tcp::resolver::iterator endpoint_iterator = r.resolve(query);
         tcp::resolver::iterator end;
@@ -609,7 +624,7 @@ public:
      * @since 0.3.0
      */
     void start_perpetual() {
-        m_work = lib::make_shared<boost::asio::io_service::work>(
+        m_work = lib::make_shared<::asio::io_service::work>(
             lib::ref(*m_io_service)
         );
     }
@@ -639,9 +654,9 @@ public:
      * needed.
      */
     timer_ptr set_timer(long duration, timer_handler callback) {
-        timer_ptr new_timer = lib::make_shared<boost::asio::deadline_timer>(
+        timer_ptr new_timer = lib::make_shared<::asio::steady_timer>(
             *m_io_service,
-            boost::posix_time::milliseconds(duration)
+            std::chrono/*boost::posix_time*/::milliseconds(duration) // mrkkrj
         );
 
         new_timer->async_wait(
@@ -667,10 +682,10 @@ public:
      * @param ec A status code indicating an error, if any.
      */
     void handle_timer(timer_ptr, timer_handler callback,
-        boost::system::error_code const & ec)
+        std::error_code const & ec)
     {
         if (ec) {
-            if (ec == boost::asio::error::operation_aborted) {
+            if (ec == ::asio::error::operation_aborted) {
                 callback(make_error_code(transport::error::operation_aborted));
             } else {
                 m_elog->write(log::elevel::info,
@@ -749,7 +764,7 @@ protected:
         m_elog = e;
     }
 
-    void handle_accept(accept_handler callback, boost::system::error_code const
+    void handle_accept(accept_handler callback, std::error_code const
         & boost_ec)
     {
         lib::error_code ret_ec;
@@ -757,7 +772,7 @@ protected:
         m_alog->write(log::alevel::devel, "asio::handle_accept");
 
         if (boost_ec) {
-            if (boost_ec == boost::system::errc::operation_canceled) {
+            if (boost_ec == /*boost::system::*/std::errc::operation_canceled) { // mrkkrj
                 ret_ec = make_error_code(websocketpp::error::operation_canceled);
             } else {
                 log_err(log::elevel::info,"asio handle_accept",boost_ec);
@@ -771,12 +786,18 @@ protected:
     /// Initiate a new connection
     // TODO: there have to be some more failure conditions here
     void async_connect(transport_con_ptr tcon, uri_ptr u, connect_handler cb) {
-        using namespace boost::asio::ip;
+        using namespace ::asio::ip;
 
         // Create a resolver
         if (!m_resolver) {
-            m_resolver = lib::make_shared<boost::asio::ip::tcp::resolver>(
+#if 0
+            m_resolver = lib::make_shared<::asio::ip::tcp::resolver>(
                 lib::ref(*m_io_service));
+#else
+            // mrkkrj
+            m_resolver = lib::make_shared<::asio::ip::tcp::resolver>(
+                m_io_service->get_executor());
+#endif
         }
 
         std::string proxy = tcon->get_proxy();
@@ -888,11 +909,11 @@ protected:
     }
 
     void handle_resolve(transport_con_ptr tcon, timer_ptr dns_timer,
-        connect_handler callback, boost::system::error_code const & ec,
-        boost::asio::ip::tcp::resolver::iterator iterator)
+        connect_handler callback, std::error_code const & ec,
+        ::asio::ip::tcp::resolver::iterator iterator)
     {
-        if (ec == boost::asio::error::operation_aborted ||
-            dns_timer->expires_from_now().is_negative())
+        if (ec == ::asio::error::operation_aborted ||
+            dns_timer->expires_from_now().count() < 0 /*.is_negative()*/) // mrkkrj
         {
             m_alog->write(log::alevel::devel,"async_resolve cancelled");
             return;
@@ -910,7 +931,7 @@ protected:
             std::stringstream s;
             s << "Async DNS resolve successful. Results: ";
 
-            boost::asio::ip::tcp::resolver::iterator it, end;
+            ::asio::ip::tcp::resolver::iterator it, end;
             for (it = iterator; it != end; ++it) {
                 s << (*it).endpoint() << " ";
             }
@@ -935,7 +956,7 @@ protected:
         );
 
         if (config::enable_multithreading) {
-            boost::asio::async_connect(
+            ::asio::async_connect(
                 tcon->get_raw_socket(),
                 iterator,
                 tcon->get_strand()->wrap(lib::bind(
@@ -948,7 +969,7 @@ protected:
                 ))
             );
         } else {
-            boost::asio::async_connect(
+            ::asio::async_connect(
                 tcon->get_raw_socket(),
                 iterator,
                 lib::bind(
@@ -997,10 +1018,10 @@ protected:
     }
 
     void handle_connect(transport_con_ptr tcon, timer_ptr con_timer,
-        connect_handler callback, boost::system::error_code const & ec)
+        connect_handler callback, std::error_code const & ec)
     {
-        if (ec == boost::asio::error::operation_aborted ||
-            con_timer->expires_from_now().is_negative())
+        if (ec == ::asio::error::operation_aborted ||
+            con_timer->expires_from_now().count() < 0 /*.is_negative()*/) // mrkkrj
         {
             m_alog->write(log::alevel::devel,"async_connect cancelled");
             return;

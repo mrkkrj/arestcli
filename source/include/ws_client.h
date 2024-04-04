@@ -526,7 +526,8 @@ private:
 };
 
 /// <summary>
-/// Websocket client class, used to maintain a connection to a remote host for an extended session, uses callback APIs for handling receive and close event instead of async task.
+/// Websocket client class, used to maintain a connection to a remote host for an extended session, uses callback APIs for handling
+///  receive and close event instead of async task.
 /// For some scenarios would be a alternative for the websocket_client like if you want to special handling on close event.
 /// </summary>
 class websocket_callback_client

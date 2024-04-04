@@ -594,10 +594,8 @@ public:
                     return;
                 }
 
-                // OPEN TODO:::
 #if !defined(CPPREST_EXCLUDE_SSL) // mrkkrj
                 m_context->m_connection->upgrade_to_ssl(m_context->m_http_client->client_config().get_ssl_context_callback());
-
                 m_ssl_tunnel_established(m_context);
 #endif
             }

@@ -42,8 +42,22 @@
 #pragma clang diagnostic ignored "-Winfinite-recursion"
 #endif
 
-#include <websocketpp/config/asio_client.hpp>
-#include <websocketpp/config/asio_no_tls_client.hpp>
+// mrkkrj: enable debug trace ouput
+#define CPPREST_WEBSOCKETPP_DEBUG
+
+#ifdef CPPREST_WEBSOCKETPP_DEBUG // mrkkrj
+#   include <websocketpp/config/debug_asio.hpp>
+#   include <websocketpp/config/debug_asio_no_tls.hpp>
+
+typedef websocketpp::config::debug_asio_tls wspp_config_asio_tls_client_t;
+typedef websocketpp::config::debug_asio wspp_config_asio_client_t;
+#else
+#   include <websocketpp/config/asio_client.hpp>
+#   include <websocketpp/config/asio_no_tls_client.hpp>
+
+typedef websocketpp::config::asio_tls_client wspp_config_asio_tls_client_t;
+typedef websocketpp::config::asio_client wspp_config_asio_client_t;
+#endif // mrkkrj
 #include <websocketpp/client.hpp>
 
 #if defined(_WIN32)
@@ -73,7 +87,7 @@ static struct ASIO_SSL_memory_leak_suppress
 {
     ~ASIO_SSL_memory_leak_suppress()
     {
-        ::SSL_COMP_free_compression_methods();
+        /*::*/SSL_COMP_free_compression_methods(); // mrkkrj
     }
 } ASIO_SSL_memory_leak_suppressor;
 
@@ -105,7 +119,9 @@ static std::string build_error_msg(const std::error_code &ec, const std::string 
 
 static utility::string_t g_subProtocolHeader(_XPLATSTR("Sec-WebSocket-Protocol"));
 
-class wspp_callback_client : public websocket_client_callback_impl, public std::enable_shared_from_this<wspp_callback_client>
+class wspp_callback_client 
+    : public websocket_client_callback_impl, 
+      public std::enable_shared_from_this<wspp_callback_client>
 {
 private:
     enum State {
@@ -170,7 +186,16 @@ public:
             m_client = std::unique_ptr<websocketpp_client_base>(new websocketpp_tls_client());
 
             // Options specific to TLS client.
-            auto &client = m_client->client<websocketpp::config::asio_tls_client>();
+            //auto &client = m_client->client<websocketpp::config::asio_tls_client>();
+            // mrkkrj                        
+            auto &client = m_client->client<wspp_config_asio_tls_client_t>();
+            
+#ifdef CPPREST_WEBSOCKETPP_DEBUG 
+            // mrkkrj: get verbose
+            client.set_access_channels(websocketpp::log::alevel::all);
+            client.set_error_channels(websocketpp::log::elevel::all);
+#endif
+
             client.set_tls_init_handler([this](websocketpp::connection_hdl)
             {
                 auto sslContext = websocketpp::lib::shared_ptr<asio::ssl::context>(new asio::ssl::context(asio::ssl::context::sslv23));
@@ -242,12 +267,26 @@ public:
                 }
             });
 
-            return connect_impl<websocketpp::config::asio_tls_client>();
+            // mrkkrj
+            //return connect_impl<websocketpp::config::asio_tls_client>();
+            return connect_impl<wspp_config_asio_tls_client_t>();
         }
         else
         {
             m_client = std::unique_ptr<websocketpp_client_base>(new websocketpp_client());
-            return connect_impl<websocketpp::config::asio_client>();
+            
+#ifdef CPPREST_WEBSOCKETPP_DEBUG 
+            // mrkkrj
+            auto& client = m_client->client<wspp_config_asio_client_t>();
+
+            // get verbose
+            client.set_access_channels(websocketpp::log::alevel::all);
+            client.set_error_channels(websocketpp::log::elevel::all);
+#endif
+
+            // mrkkrj
+            //return connect_impl<websocketpp::config::asio_client>();
+            return connect_impl<wspp_config_asio_client_t>();
         }
     }
 
@@ -256,8 +295,14 @@ public:
     {
         auto &client = m_client->client<WebsocketConfigType>();
 
+#ifdef CPPREST_WEBSOCKETPP_DEBUG 
+        // mrkkrj: get verbose
+        client.set_access_channels(websocketpp::log::alevel::all);
+        client.set_error_channels(websocketpp::log::elevel::all);
+#else
         client.clear_access_channels(websocketpp::log::alevel::all);
         client.clear_error_channels(websocketpp::log::alevel::all);
+#endif
         client.init_asio();
         client.start_perpetual();
 
@@ -275,7 +320,10 @@ public:
             shutdown_wspp_impl<WebsocketConfigType>(con_hdl, true);
         });
 
-        client.set_message_handler([this](websocketpp::connection_hdl, const websocketpp::config::asio_client::message_type::ptr &msg)
+        client.set_message_handler(
+            // mrkkrj
+            //[this](websocketpp::connection_hdl, const websocketpp::config::asio_client::message_type::ptr &msg)
+            [this](websocketpp::connection_hdl, const wspp_config_asio_client_t::message_type::ptr& msg)
         {
             if (m_external_message_handler)
             {
@@ -522,11 +570,15 @@ public:
             websocketpp::lib::error_code ec;
             if (this_client->m_client->is_tls_client())
             {
-                this_client->send_msg_impl<websocketpp::config::asio_tls_client>(this_client, msg, sp_allocated, length, ec);
+                // mrkkrj
+                //this_client->send_msg_impl<websocketpp::config::asio_tls_client>(this_client, msg, sp_allocated, length, ec);
+                this_client->send_msg_impl<wspp_config_asio_tls_client_t>(this_client, msg, sp_allocated, length, ec);                
             }
             else
             {
-                this_client->send_msg_impl<websocketpp::config::asio_client>(this_client, msg, sp_allocated, length, ec);
+                // mrkkrj
+                //this_client->send_msg_impl<websocketpp::config::asio_client>(this_client, msg, sp_allocated, length, ec);
+                this_client->send_msg_impl<wspp_config_asio_client_t>(this_client, msg, sp_allocated, length, ec);
             }
             return ec;
         }).then([this_client, msg, is_buf, acquired, sp_allocated, length](pplx::task<websocketpp::lib::error_code> previousTask) mutable
@@ -586,11 +638,15 @@ public:
                 m_state = CLOSING;
                 if (m_client->is_tls_client())
                 {
-                    close_impl<websocketpp::config::asio_tls_client>(status, reason, ec);
+                    // mrkkrj
+                    //close_impl<websocketpp::config::asio_tls_client>(status, reason, ec);
+                    close_impl<wspp_config_asio_tls_client_t>(status, reason, ec);
                 }
                 else
                 {
-                    close_impl<websocketpp::config::asio_client>(status, reason, ec);
+                    // mrkkrj
+                    //close_impl<websocketpp::config::asio_client>(status, reason, ec);
+                    close_impl<wspp_config_asio_client_t>(status, reason, ec);
                 }
             }
         }
@@ -716,11 +772,15 @@ private:
                 return reinterpret_cast<websocketpp::client<WebsocketConfig> &>(non_tls_client());
             }
         }
-        virtual websocketpp::client<websocketpp::config::asio_client> & non_tls_client()
+        // mrkkrj
+        //virtual websocketpp::client<websocketpp::config::asio_client> & non_tls_client()
+        virtual websocketpp::client<wspp_config_asio_client_t>& non_tls_client()
         {
             throw std::bad_cast();
         }
-        virtual websocketpp::client<websocketpp::config::asio_tls_client> & tls_client()
+        // mrkkrj
+        //virtual websocketpp::client<websocketpp::config::asio_tls_client> & tls_client()
+        virtual websocketpp::client<wspp_config_asio_tls_client_t>& tls_client()
         {
             throw std::bad_cast();
         }
@@ -728,21 +788,30 @@ private:
     };
     struct websocketpp_client : websocketpp_client_base
     {
-        websocketpp::client<websocketpp::config::asio_client> & non_tls_client() override
+        // mrkkrj
+        //websocketpp::client<websocketpp::config::asio_client> & non_tls_client() override
+        websocketpp::client<wspp_config_asio_client_t>& non_tls_client() override
         {
             return m_client;
         }
         bool is_tls_client() const override { return false; }
-        websocketpp::client<websocketpp::config::asio_client> m_client;
+        // mrkkrj
+        //websocketpp::client<websocketpp::config::asio_client> m_client;
+        websocketpp::client<wspp_config_asio_client_t> m_client;
     };
     struct websocketpp_tls_client : websocketpp_client_base
     {
-        websocketpp::client<websocketpp::config::asio_tls_client> & tls_client() override
+        // mrkkrj
+        //websocketpp::client<websocketpp::config::asio_tls_client> & tls_client() override
+        websocketpp::client<wspp_config_asio_tls_client_t>& tls_client() override
         {
             return m_client;
         }
         bool is_tls_client() const override { return true; }
-        websocketpp::client<websocketpp::config::asio_tls_client> m_client;
+        
+        // mrkkrj
+        //websocketpp::client<websocketpp::config::asio_tls_client> m_client;
+        websocketpp::client<wspp_config_asio_tls_client_t> m_client;        
     };
 
     websocketpp::connection_hdl m_con;

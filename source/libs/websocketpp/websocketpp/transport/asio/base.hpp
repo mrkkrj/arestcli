@@ -32,11 +32,26 @@
 #include <websocketpp/common/functional.hpp>
 #include <websocketpp/common/system_error.hpp>
 
-#include <boost/system/error_code.hpp>
+// mrkkrj
+//#include <boost/system/error_code.hpp>
+//
+//#include <boost/aligned_storage.hpp>
+//#include <boost/noncopyable.hpp>
+//#include <boost/array.hpp>
+#include <type_traits>
+#include <array>
 
-#include <boost/aligned_storage.hpp>
-#include <boost/noncopyable.hpp>
-#include <boost/array.hpp>
+namespace boostutil
+{
+    class noncopyable
+    {
+    protected:
+        constexpr noncopyable() = default;
+        ~noncopyable() = default;
+        noncopyable(const noncopyable&) = delete;
+        noncopyable& operator=(const noncopyable&) = delete;
+    };
+}
 
 #include <string>
 
@@ -56,7 +71,7 @@ namespace asio {
 // requests. If the memory is in use when an allocation request is made, the
 // allocator delegates allocation to the global heap.
 class handler_allocator
-  : private boost::noncopyable
+  : private boostutil::noncopyable
 {
 public:
   handler_allocator()
@@ -66,10 +81,14 @@ public:
 
   void* allocate(std::size_t size)
   {
-    if (!in_use_ && size < storage_.size)
+    if (!in_use_ && 
+        // mrkkrj
+        size < 1024 /*storage_.size*/)
     {
       in_use_ = true;
-      return storage_.address();
+      // mrkkrj
+      //return storage_.address();
+      return reinterpret_cast<void*>(&storage_);
     }
     else
     {
@@ -79,7 +98,9 @@ public:
 
   void deallocate(void* pointer)
   {
-    if (pointer == storage_.address())
+    // mrkkrj
+    //if (pointer == storage_.address())
+    if (pointer == reinterpret_cast<void*>(&storage_))
     {
       in_use_ = false;
     }
@@ -91,7 +112,7 @@ public:
 
 private:
   // Storage space used for handler-based custom memory allocation.
-  boost::aligned_storage<1024> storage_;
+  std::aligned_storage<1024> storage_;
 
   // Whether the handler-based custom allocation storage has been used.
   bool in_use_;
@@ -158,14 +179,14 @@ inline custom_alloc_handler<Handler> make_custom_alloc_handler(
 template <typename config>
 class endpoint;
 
-typedef lib::function<void(boost::system::error_code const &)>
+typedef lib::function<void(std::error_code const &)> // mrkkrj
     socket_shutdown_handler;
 
-typedef lib::function<void (boost::system::error_code const & ec,
-    size_t bytes_transferred)> async_read_handler;
+typedef lib::function<void (std::error_code const & ec, // mrkkrj
+    std::size_t bytes_transferred)> async_read_handler;
 
-typedef lib::function<void (boost::system::error_code const & ec,
-    size_t bytes_transferred)> async_write_handler;
+typedef lib::function<void (std::error_code const & ec, // mrkkrj
+    std::size_t bytes_transferred)> async_write_handler;
 
 typedef lib::function<void (lib::error_code const & ec)> pre_init_handler;
 

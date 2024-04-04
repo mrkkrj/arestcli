@@ -4,7 +4,9 @@
 
 #include <http_client.h>
 #include <cpprest/json.h>
+
 #include "file_example.cpp"
+#include "ws_example.cpp"
 
 using namespace web;
 using namespace web::http;
@@ -107,6 +109,11 @@ int main()
 
     print_result(client_resp, "www.httpbin.org/headers (SSL)");
 
+
+    // 3.a HTTPS with validation    
+    
+    // ... OPEN TODO:::
+
 #endif
 
     // 4. file transfer
@@ -119,6 +126,19 @@ int main()
         print_exception();
         return -1;
     }
+
+    // 5. websockets
+#if !defined(CPPREST_EXCLUDE_WEBSOCKETS) 
+    try
+    {
+        websockets_test();
+    }
+    catch (...)
+    {
+        print_exception();
+        return -1;
+    }
+#endif
 }
 
 

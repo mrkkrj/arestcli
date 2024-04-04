@@ -2,7 +2,8 @@
 
 #include <queue>
 #include <mutex>
-#include "cpprest/ws_client.h"
+//#include "cpprest/ws_client.h" --- mrkkrj
+#include <ws_client.h>
 #include "cpprest/ws_msg.h"
 
 namespace web

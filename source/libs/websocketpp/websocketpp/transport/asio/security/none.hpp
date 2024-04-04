@@ -32,7 +32,10 @@
 
 #include <websocketpp/common/memory.hpp>
 
-#include <boost/asio.hpp>
+// mrkkrj
+//#include <boost/asio.hpp>
+#include <asio.hpp>
+#include <asio/ip/tcp.hpp>
 
 #include <sstream>
 #include <string>
@@ -45,7 +48,7 @@ namespace asio {
 namespace basic_socket {
 
 /// The signature of the socket init handler for this socket policy
-typedef lib::function<void(connection_hdl,boost::asio::ip::tcp::socket&)>
+typedef lib::function<void(connection_hdl, ::asio::ip::tcp::socket&)>
     socket_init_handler;
 
 /// Basic Boost ASIO connection socket component
@@ -61,11 +64,11 @@ public:
     typedef lib::shared_ptr<type> ptr;
 
     /// Type of a pointer to the ASIO io_service being used
-    typedef boost::asio::io_service* io_service_ptr;
+    typedef ::asio::io_service* io_service_ptr;
     /// Type of a pointer to the ASIO io_service strand being used
-    typedef lib::shared_ptr<boost::asio::io_service::strand> strand_ptr;
+    typedef lib::shared_ptr<::asio::io_service::strand> strand_ptr;
     /// Type of the ASIO socket being used
-    typedef boost::asio::ip::tcp::socket socket_type;
+    typedef ::asio::ip::tcp::socket socket_type;
     /// Type of a shared pointer to the socket being used.
     typedef lib::shared_ptr<socket_type> socket_ptr;
 
@@ -103,7 +106,7 @@ public:
     /**
      * This is used internally. It can also be used to set socket options, etc
      */
-    boost::asio::ip::tcp::socket& get_socket() {
+    ::asio::ip::tcp::socket& get_socket() {
         return *m_socket;
     }
 
@@ -111,7 +114,7 @@ public:
     /**
      * This is used internally.
      */
-    boost::asio::ip::tcp::socket& get_next_layer() {
+    ::asio::ip::tcp::socket& get_next_layer() {
         return *m_socket;
     }
 
@@ -119,7 +122,7 @@ public:
     /**
      * This is used internally. It can also be used to set socket options, etc
      */
-    boost::asio::ip::tcp::socket& get_raw_socket() {
+    ::asio::ip::tcp::socket& get_raw_socket() {
         return *m_socket;
     }
 
@@ -136,8 +139,8 @@ public:
     std::string get_remote_endpoint(lib::error_code &ec) const {
         std::stringstream s;
 
-        boost::system::error_code bec;
-        boost::asio::ip::tcp::endpoint ep = m_socket->remote_endpoint(bec);
+        std::error_code bec;
+        ::asio::ip::tcp::endpoint ep = m_socket->remote_endpoint(bec);
 
         if (bec) {
             ec = error::make_error_code(error::pass_through);
@@ -154,7 +157,7 @@ protected:
     /// Perform one time initializations
     /**
      * init_asio is called once immediately after construction to initialize
-     * boost::asio components to the io_service
+     * asio components to the io_service
      *
      * @param service A pointer to the endpoint's io_service
      * @param strand A shared pointer to the connection's asio strand
@@ -166,8 +169,17 @@ protected:
             return socket::make_error_code(socket::error::invalid_state);
         }
 
-        m_socket = lib::make_shared<boost::asio::ip::tcp::socket>(
+#if 0
+        m_socket = lib::make_shared<::asio::ip::tcp::socket>(
             lib::ref(*service));
+#else
+        // mrkkrj ---
+        //::asio::io_service::executor_type executor = service->get_executor();
+        //auto socket = new connection::socket_type(executor);
+
+        m_socket = lib::make_shared<::asio::ip::tcp::socket>(
+            service->get_executor());
+#endif
 
         m_state = READY;
 
@@ -227,8 +239,8 @@ protected:
     }
 
     void async_shutdown(socket_shutdown_handler h) {
-        boost::system::error_code ec;
-        m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both,ec);
+        std::error_code ec;
+        m_socket->shutdown(::asio::ip::tcp::socket::shutdown_both,ec);
         h(ec);
     }
 
@@ -248,7 +260,7 @@ protected:
      * @param ec The error code to translate_ec
      * @return The translated error code
      */
-    lib::error_code translate_ec(boost::system::error_code) {
+    lib::error_code translate_ec(std::error_code) {
         // We don't know any more information about this error so pass through
         return make_error_code(transport::error::pass_through);
     }

@@ -13,7 +13,7 @@
 * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 //#include "stdafx.h" -- mrkkrj
-#include "cpprest/ws_client.h"
+#include <ws_client.h>
 #include "cpprest/ws_msg.h"
 
 #include "../../common/internal_http_helpers.h"

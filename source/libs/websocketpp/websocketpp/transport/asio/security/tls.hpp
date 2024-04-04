@@ -34,9 +34,13 @@
 #include <websocketpp/common/functional.hpp>
 #include <websocketpp/common/memory.hpp>
 
-#include <boost/asio.hpp>
-#include <boost/asio/ssl.hpp>
-#include <boost/system/error_code.hpp>
+// mrkkrj
+//#include <boost/asio.hpp>
+//#include <boost/asio/ssl.hpp>
+//#include <boost/system/error_code.hpp>
+#include <asio.hpp>
+#include <asio/ssl.hpp>
+
 
 #include <sstream>
 #include <string>
@@ -49,10 +53,10 @@ namespace asio {
 namespace tls_socket {
 
 /// The signature of the socket_init_handler for this socket policy
-typedef lib::function<void(connection_hdl,boost::asio::ssl::stream<
-    boost::asio::ip::tcp::socket>&)> socket_init_handler;
+typedef lib::function<void(connection_hdl,::asio::ssl::stream<
+    ::asio::ip::tcp::socket>&)> socket_init_handler;
 /// The signature of the tls_init_handler for this socket policy
-typedef lib::function<lib::shared_ptr<boost::asio::ssl::context>(connection_hdl)>
+typedef lib::function<lib::shared_ptr<::asio::ssl::context>(connection_hdl)>
     tls_init_handler;
 
 /// TLS enabled Boost ASIO connection socket component
@@ -68,17 +72,17 @@ public:
     typedef lib::shared_ptr<type> ptr;
 
     /// Type of the ASIO socket being used
-    typedef boost::asio::ssl::stream<boost::asio::ip::tcp::socket> socket_type;
+    typedef ::asio::ssl::stream<::asio::ip::tcp::socket> socket_type;
     /// Type of a shared pointer to the ASIO socket being used
     typedef lib::shared_ptr<socket_type> socket_ptr;
     /// Type of a pointer to the ASIO io_service being used
-    typedef boost::asio::io_service* io_service_ptr;
+    typedef ::asio::io_service* io_service_ptr;
     /// Type of a pointer to the ASIO io_service strand being used
-    typedef lib::shared_ptr<boost::asio::io_service::strand> strand_ptr;
+    typedef lib::shared_ptr<::asio::io_service::strand> strand_ptr;
     /// Type of a shared pointer to the ASIO TLS context being used
-    typedef lib::shared_ptr<boost::asio::ssl::context> context_ptr;
+    typedef lib::shared_ptr<::asio::ssl::context> context_ptr;
 
-    typedef boost::system::error_code boost_error;
+    //typedef STD::error_code boost_error; -- mrkkrj
 
     explicit connection() {
         //std::cout << "transport::asio::tls_socket::connection constructor"
@@ -160,8 +164,8 @@ public:
     std::string get_remote_endpoint(lib::error_code &ec) const {
         std::stringstream s;
 
-        boost::system::error_code bec;
-        boost::asio::ip::tcp::endpoint ep = m_socket->lowest_layer().remote_endpoint(bec);
+        std::error_code bec; // mrkkrj
+        ::asio::ip::tcp::endpoint ep = m_socket->lowest_layer().remote_endpoint(bec);
 
         if (bec) {
             ec = error::make_error_code(error::pass_through);
@@ -178,7 +182,7 @@ protected:
     /// Perform one time initializations
     /**
      * init_asio is called once immediately after construction to initialize
-     * boost::asio components to the io_service
+     * asio components to the io_service
      *
      * @param service A pointer to the endpoint's io_service
      * @param strand A pointer to the connection's strand
@@ -195,8 +199,19 @@ protected:
         if (!m_context) {
             return socket::make_error_code(socket::error::invalid_tls_context);
         }
+
+#if 0
         m_socket = lib::make_shared<socket_type>(
             _WEBSOCKETPP_REF(*service),lib::ref(*m_context));
+#else
+        // mrkkrj --- 
+        //auto socket = new socket_type(service->get_executor());
+
+        //::asio::io_service::executor_type executor = service->get_executor();
+        //auto socket = new connection::socket_type(executor, *m_context);
+
+        m_socket = lib::make_shared<socket_type>(service->get_executor(), *m_context);
+#endif
 
         m_io_service = service;
         m_strand = strand;
@@ -266,7 +281,7 @@ protected:
         m_hdl = hdl;
     }
 
-    void handle_init(init_handler callback,boost::system::error_code const & ec)
+    void handle_init(init_handler callback,/*boost::system::*/std::error_code const & ec) // mrkkrj
     {
         if (ec) {
             m_ec = socket::make_error_code(socket::error::tls_handshake_failed);
@@ -305,11 +320,16 @@ protected:
      * @param ec The error code to translate_ec
      * @return The translated error code
      */
-    lib::error_code translate_ec(boost::system::error_code ec) {
-        if (ec.category() == boost::asio::error::get_ssl_category()) {
+    lib::error_code translate_ec(std::error_code ec) // mrkkrj
+    { 
+        if (ec.category() == ::asio::error::get_ssl_category()) {
+            // OPEN TODO::: SSL_R_SHORT_READ bot in the newest openSSL, needed???? (mrkkrj)
+#if 0
             if (ERR_GET_REASON(ec.value()) == SSL_R_SHORT_READ) {
                 return make_error_code(transport::error::tls_short_read);
-            } else {
+            } else 
+#endif
+            {
                 // We know it is a TLS related error, but otherwise don't know
                 // more. Pass through as TLS generic.
                 return make_error_code(transport::error::tls_error);
@@ -323,9 +343,9 @@ protected:
 private:
     socket_type::handshake_type get_handshake_type() {
         if (m_is_server) {
-            return boost::asio::ssl::stream_base::server;
+            return ::asio::ssl::stream_base::server;
         } else {
-            return boost::asio::ssl::stream_base::client;
+            return ::asio::ssl::stream_base::client;
         }
     }
 
