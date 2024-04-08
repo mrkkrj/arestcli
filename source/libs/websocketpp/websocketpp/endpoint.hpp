@@ -299,6 +299,8 @@ public:
     void set_open_handshake_timeout(long dur) {
         scoped_lock_type guard(m_mutex);
         m_open_handshake_timeout_dur = dur;
+        // mrkkrj
+        m_alog.write(log::alevel::devel, "set_open_handshake_timeout: " + std::to_string(dur) + "ms");
     }
 
     /// Set close handshake timeout
@@ -324,6 +326,8 @@ public:
     void set_close_handshake_timeout(long dur) {
         scoped_lock_type guard(m_mutex);
         m_close_handshake_timeout_dur = dur;
+        // mrkkrj
+        m_alog.write(log::alevel::devel, "set_close_handshake_timeout: " + std::to_string(dur) + "ms");
     }
 
     /// Set pong timeout
@@ -346,6 +350,8 @@ public:
     void set_pong_timeout(long dur) {
         scoped_lock_type guard(m_mutex);
         m_pong_timeout_dur = dur;
+        // mrkkrj
+        m_alog.write(log::alevel::devel, "set_pong_timeout: " + std::to_string(dur) + "ms");
     }
 
     /// Get default maximum message size

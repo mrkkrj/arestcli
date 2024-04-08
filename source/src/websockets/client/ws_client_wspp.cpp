@@ -192,8 +192,16 @@ public:
             
 #ifdef CPPREST_WEBSOCKETPP_DEBUG 
             // mrkkrj: get verbose
-            client.set_access_channels(websocketpp::log::alevel::all);
-            client.set_error_channels(websocketpp::log::elevel::all);
+            if (config().enable_ws_debug_trace())
+            {
+                client.set_access_channels(websocketpp::log::alevel::all);
+                client.set_error_channels(websocketpp::log::elevel::all);
+            }
+            else
+            {
+                client.clear_access_channels(websocketpp::log::alevel::all);
+                client.clear_error_channels(websocketpp::log::alevel::all);
+            }
 #endif
 
             client.set_tls_init_handler([this](websocketpp::connection_hdl)
@@ -279,11 +287,18 @@ public:
             // mrkkrj
             auto& client = m_client->client<wspp_config_asio_client_t>();
 
-            // get verbose
-            client.set_access_channels(websocketpp::log::alevel::all);
-            client.set_error_channels(websocketpp::log::elevel::all);
+            if (config().enable_ws_debug_trace())
+            {
+                // get verbose
+                client.set_access_channels(websocketpp::log::alevel::all);
+                client.set_error_channels(websocketpp::log::elevel::all);
+            }
+            else
+            {
+                client.clear_access_channels(websocketpp::log::alevel::all);
+                client.clear_error_channels(websocketpp::log::alevel::all);
+            }
 #endif
-
             // mrkkrj
             //return connect_impl<websocketpp::config::asio_client>();
             return connect_impl<wspp_config_asio_client_t>();
@@ -296,13 +311,28 @@ public:
         auto &client = m_client->client<WebsocketConfigType>();
 
 #ifdef CPPREST_WEBSOCKETPP_DEBUG 
-        // mrkkrj: get verbose
-        client.set_access_channels(websocketpp::log::alevel::all);
-        client.set_error_channels(websocketpp::log::elevel::all);
+        if (config().enable_ws_debug_trace())
+        {
+            // mrkkrj: get verbose
+            client.set_access_channels(websocketpp::log::alevel::all);
+            client.set_error_channels(websocketpp::log::elevel::all);
+        }
+        else
+        {
+            client.clear_access_channels(websocketpp::log::alevel::all);
+            client.clear_error_channels(websocketpp::log::alevel::all);
+        }
 #else
         client.clear_access_channels(websocketpp::log::alevel::all);
         client.clear_error_channels(websocketpp::log::alevel::all);
 #endif
+
+        // mrkkrj: change timeouts?
+        if (config().open_handshake_timeout() != 0)
+        {
+            client.set_open_handshake_timeout(config().open_handshake_timeout());
+        }
+
         client.init_asio();
         client.start_perpetual();
 

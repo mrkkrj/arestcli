@@ -153,6 +153,11 @@ void print_exception()
         std::cout << "EXIT -- HTTP exception thrown!!!" << std::endl;
         std::cout << "  txt=" << exc.what() << std::endl;
     }
+    catch (web::websockets::client::websocket_exception& exc)
+    {
+        std::cout << "EXIT -- Websockets exception thrown!!!" << std::endl;
+        std::cout << "  error=" << exc.error_code() << ", txt=" << exc.what() << std::endl;
+    }
     catch (json::json_exception& exc)
     {
         std::cout << "EXIT -- JSON exception thrown!!!" << std::endl;

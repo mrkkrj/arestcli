@@ -868,10 +868,16 @@ protected:
             socket_con_type::get_socket(),
             ::asio::buffer(buf,len),
             ::asio::transfer_at_least(num_bytes),
+//#if __cplusplus >= 202002L // mrkkrj
+#if 1
+            // C++20 
+            m_async_read_handler
+#else
             make_custom_alloc_handler(
                 m_read_handler_allocator,
                 m_async_read_handler
             )
+#endif
         );
     }
 
@@ -925,10 +931,16 @@ protected:
         ::asio::async_write(
             socket_con_type::get_socket(),
             m_bufs,
+//#if __cplusplus >= 202002L // mrkkrj
+#if 1
+            // C++20 
+            m_async_write_handler
+#else
             make_custom_alloc_handler(
                 m_write_handler_allocator,
                 m_async_write_handler
             )
+#endif
         );
     }
 
@@ -950,10 +962,16 @@ protected:
         ::asio::async_write(
             socket_con_type::get_socket(),
             m_bufs,
+//#if __cplusplus >= 202002L // mrkkrj
+#if 1
+            // C++20 
+            m_async_write_handler
+#else
             make_custom_alloc_handler(
                 m_write_handler_allocator,
                 m_async_write_handler
             )
+#endif
         );
     }
 

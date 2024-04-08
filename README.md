@@ -2,16 +2,16 @@
 
 arestcli (i.e. Asio REST Client) is a C++ REST client using (non-boost) Asio library underneath.
 
-This is a port of Microsoft's REST-SDK (aka Casablanca) using Asio library instead of boost::Asio, and also forcing usage of Asio also on Windows.
+This is a C++20 port of Microsoft's old REST-SDK (aka Casablanca) using Asio library instead of boost::Asio, and also forcing the usage of Asio on Windows.
 
-It was created because BEAST is quite unwieldy (and because it needs the whole of boost!!!).
+It was created because Boost.BEAST is quite unwieldy (and because it needs the whole of boost!!!).
 
 ![testing arestcli](./arestcli-test.jpg)
 
 ## WIP: 
  - Only some tests on Windows done 
- - Websockets and compression disabled and not yet tested (but SSL working)
- - Only a VisualStudio 2022 solution provided!!! Only working for Debug build, to boot. :-(
+ - compression disabled and not yet tested (but SSL + websockets workingi!)
+ - Only a VisualStudio 2022 solution provided!!! An only working for Debug build, to boot. :-(
 
 ## Plans: 
  - Currently a proprietary continuations library by Microsoft is used. I will try to remove this and use C++20 coroutines support in Asio instead.
@@ -62,6 +62,47 @@ int main()
 }
 ```
 
+## Websockets:
+
+```cpp
+#include <ws_client.h>
+
+using namespace web;
+using namespace web::websockets;
+using namespace web::websockets::client;
+
+
+int main()
+{
+    try
+    {
+        websockets::client::websocket_client wsClient();
+        wsClient.connect(U("ws://localhost:8080")).get(); 
+
+        websocket_outgoing_message msg;
+        msg.set_utf8_message("Hello from client!");
+
+        wsClient.send(msg).get();
+        auto response = wsClient.receive().get();
+    
+        wsClient.close().get();
+    }
+    catch (websocket_exception& exc)
+    {
+        std::cout << "exc=" << exc.error_code() << ", txt=" << exc.what() << std::endl;
+    }
+}
+```
+
 ## Notes:
- - the example VisualStudio project expects Asio (just Asio, not boost::Asio!!!) to be installed in ../asio-1.28.0
+ - the example VisualStudio project expects Asio (just Asio, not boost::Asio!!!) to be installed in ../asio-1.28.0 (header-only, OPEN TODO::: automate it!)
  - also OpenSSL has to be installed - disable SLL support with CPPREST_EXCLUDE_SSL
+
+### Build options:
+
+ - CPPREST_EXCLUDE_SSL
+ - CPPREST_EXCLUDE_WEBSOCKETS
+ - CPPREST_EXCLUDE_COMPRESSION
+
+ - CPPREST_WEBSOCKETPP_DEBUG : enable weebsocketpp's debug traces (otherwise ther are compiled out and cannot be switched on=
+ 

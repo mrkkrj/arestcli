@@ -74,7 +74,10 @@ public:
     /// </summary>
     websocket_client_config() :
         m_sni_enabled(true),
-        m_validate_certificates(true)
+        m_validate_certificates(true),
+        // mrkkrj
+        m_enable_ws_debug_trace(false), 
+        m_open_handshake_timeout(0)
 	{
 	}
 
@@ -199,6 +202,39 @@ public:
         m_validate_certificates = validate_certs;
     }
 
+
+    // mrkkrj - addtional more specific settings
+
+    /// <summary>
+    /// Sets the enable debug traces property.
+    /// </summary>
+    /// <param name="open_handshake_timeout">>True to turn on (very verbose) debug trace, false otherwise.</param>
+    /// <remarks>Note trace outputs will appear on stdout/stderr</remarks>
+    void set_enable_ws_debug_trace(bool enable_ws_debug_trace)
+    {
+        m_enable_ws_debug_trace = enable_ws_debug_trace;
+    }
+
+    bool enable_ws_debug_trace() const
+    {
+        return m_enable_ws_debug_trace;
+    }
+
+    /// <summary>
+    /// Sets the open handshake timeout property.
+    /// </summary>
+    /// <param name="open_handshake_timeout">Non zero to set the new timeout (in milliseconds), zero otherwise.</param>
+    /// <remarks>Note underlying websocketspp's default is 5000 ms.</remarks>
+    void set_open_handshake_timeout(long open_handshake_timeout)
+    {
+        m_open_handshake_timeout = open_handshake_timeout;
+    }
+
+    long open_handshake_timeout() const
+    {
+        return m_open_handshake_timeout;
+    }
+
 private:
     web::web_proxy m_proxy;
     web::credentials m_credentials;
@@ -206,6 +242,11 @@ private:
     bool m_sni_enabled;
     utf8string m_sni_hostname;
     bool m_validate_certificates;
+    
+    // mrkkrj
+    bool m_enable_ws_debug_trace;
+    long m_open_handshake_timeout;
+    std::string m_user_agent;
 };
 
 /// <summary>

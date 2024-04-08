@@ -106,10 +106,11 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING;CPPREST_EXCLUDE_COMPRESSION;CPPREST_EXCLUDE_WEBSOCKETS;_NO_ASYNCRTIMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING;CPPREST_EXCLUDE_COMPRESSION;_NO_ASYNCRTIMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\source\libs\websocketpp;../\asio-1.28.0\asio-1.28.0/include;../source/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -153,6 +154,7 @@
     <ClCompile Include="..\source\src\utilities\asyncrt_utils.cpp" />
     <ClCompile Include="..\source\src\utilities\base64.cpp" />
     <ClCompile Include="..\source\src\utilities\web_utilities.cpp" />
+    <ClCompile Include="..\source\src\utilities\x509_cert_utilities.cpp" />
     <ClCompile Include="..\source\src\websockets\client\ws_client.cpp" />
     <ClCompile Include="..\source\src\websockets\client\ws_client_wspp.cpp" />
     <ClCompile Include="..\source\src\websockets\client\ws_msg.cpp" />
@@ -179,6 +181,22 @@
     <ClInclude Include="..\source\include\cpprest\ws_client.h" />
     <ClInclude Include="..\source\include\cpprest\ws_msg.h" />
     <ClInclude Include="..\source\include\http_client.h" />
+    <ClInclude Include="..\source\include\ws_client.h" />
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\config\asio.hpp" />
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\config\asio_client.hpp" />
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\config\asio_no_tls.hpp" />
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\config\asio_no_tls_client.hpp" />
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\config\core.hpp" />
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\config\core_client.hpp" />
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\config\debug.hpp" />
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\config\debug_asio.hpp" />
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\config\debug_asio_no_tls.hpp" />
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\transport\asio\base.hpp" />
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\transport\asio\connection.hpp" />
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\transport\asio\endpoint.hpp" />
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\transport\asio\security\base.hpp" />
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\transport\asio\security\none.hpp" />
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\transport\asio\security\tls.hpp" />
     <ClInclude Include="..\source\src\common\internal_http_helpers.h" />
     <ClInclude Include="..\source\src\common\string_utils.h" />
     <ClInclude Include="..\source\src\http_client_impl.h" />

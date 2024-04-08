@@ -43,12 +43,21 @@
     <Filter Include="Headerdateien\cpprest">
       <UniqueIdentifier>{245f0343-0f3b-4183-b4d3-8c0548879f4d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Quelldateien\lib">
+      <UniqueIdentifier>{aa91e54f-d6e5-485e-8ab6-0ad01b4dcc53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\lib\websocketpp">
+      <UniqueIdentifier>{48578333-6784-4c71-82aa-8a438ed399c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\websocketspp">
+      <UniqueIdentifier>{4a64c615-ac4f-4e2e-b75c-f6e3a818cd8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\websocketspp\transport">
+      <UniqueIdentifier>{9a410eaf-3e32-434a-a248-a4f1b274f655}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\include\http_client.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\src\http_client_impl.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="..\source\src\common\string_utils.h">
@@ -120,6 +129,57 @@
     <ClInclude Include="..\source\include\cpprest\ws_msg.h">
       <Filter>Headerdateien\cpprest</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\transport\asio\base.hpp">
+      <Filter>Quelldateien\lib\websocketpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\transport\asio\connection.hpp">
+      <Filter>Quelldateien\lib\websocketpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\transport\asio\endpoint.hpp">
+      <Filter>Quelldateien\lib\websocketpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\transport\asio\security\base.hpp">
+      <Filter>Quelldateien\lib\websocketpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\transport\asio\security\none.hpp">
+      <Filter>Quelldateien\lib\websocketpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\transport\asio\security\tls.hpp">
+      <Filter>Quelldateien\lib\websocketpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\config\asio.hpp">
+      <Filter>Headerdateien\websocketspp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\config\asio_client.hpp">
+      <Filter>Headerdateien\websocketspp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\config\asio_no_tls.hpp">
+      <Filter>Headerdateien\websocketspp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\config\asio_no_tls_client.hpp">
+      <Filter>Headerdateien\websocketspp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\config\core.hpp">
+      <Filter>Headerdateien\websocketspp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\config\core_client.hpp">
+      <Filter>Headerdateien\websocketspp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\config\debug.hpp">
+      <Filter>Headerdateien\websocketspp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\config\debug_asio.hpp">
+      <Filter>Headerdateien\websocketspp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\libs\websocketpp\websocketpp\config\debug_asio_no_tls.hpp">
+      <Filter>Headerdateien\websocketspp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\include\ws_client.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\src\http_client_impl.h">
+      <Filter>Quelldateien\arestcli</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\examples\basic_example.cpp">
@@ -187,6 +247,9 @@
     </ClCompile>
     <ClCompile Include="..\source\src\streams\fileio_posix.cpp">
       <Filter>Quelldateien\arestcli\streams</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\src\utilities\x509_cert_utilities.cpp">
+      <Filter>Quelldateien\arestcli\utilities</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -12,60 +12,78 @@ using namespace web::websockets::client;
 
 void websockets_test()
 {
-    printf("Websockets not yet working!!!!\n\n");
-    return;
+    websocket_outgoing_message msg;
+    websocket_incoming_message resp;
 
-    // basic
+    // 1. localhost + no SSL
+    //  --> start test/ws_echo_server.py
+    printf("Websockets test - looking for local ws_echo_server.py....\n");
+
     websockets::client::websocket_client_config config;
-    //config ---> OPEN TODO:: enable develper traces from here!
-    websockets::client::websocket_client wsClient;
+    //config.set_enable_ws_debug_trace(true);
 
-    wsClient.connect(U("ws://echo.websocket.org")).get();
+    websockets::client::websocket_client wsClient(config);
+    wsClient.connect(U("ws://localhost:8080")).get(); 
+
+    msg.set_utf8_message("Hello from client!");
+
+    wsClient.send(msg).get();
+    resp = wsClient.receive().get();
+
+    if (resp.extract_string().get() != "Hello from client!")
+    {
+        printf("Websockets test (basic/local) ERR!\n\n");
+    }
+    else
+    {
+        printf("Websockets test (basic/local) OK!\n\n");
+    }
+    
     wsClient.close().get();
+    
+    // 2. localhost with SSL
+    //  --> start test/wss_echo_server.py
+    printf("Websockets test - looking for local wss_echo_server.py....\n");
 
-    printf("Websockets test (basic) OK!\n\n");
-
-    // SSL
     websockets::client::websocket_client_config config_ssl;
     config_ssl.set_validate_certificates(false); // just use the tunnel!
+    //config_ssl.set_enable_ws_debug_trace(true);
+    //config_ssl.set_open_handshake_timeout(12000);
 
     websockets::client::websocket_client wssClient(config_ssl);
+    wssClient.connect(U("wss://localhost:8081")).get();
 
-    wssClient.connect(U("wss://socketsbay.com/wss/v2/1/demo/")) // wss://echo.websocket.org ???
-#if 0
-        .then(
-            [=]()
-            {
-                return wsClient.send("TEST...")
-            })
-        .then(
-            [=](websocket_incoming_message response)
-            {
-                printf("Response status code: %u.\n", response.status_code());
-                return response.body();
-            })
-                    .then(
-                        [=](size_t n)
-                        {
-                            printf("Received %zd bytes.\n", n);
+    msg.set_utf8_message("Hello from SSL client!");
 
-                            return fileBuffer->close();
-                        })
-                .wait();
+    wssClient.send(msg).get();
+    resp = wssClient.receive().get();
 
-            //if (response.status_code() == status_codes::OK)
-            //{
-            //    ws_resp = response.extract_json().get();
-            //}
-            //else
-            //{
-            //    ws_resp = json::value();
-            //}
-#else
-        .get();
-#endif
+    if (resp.extract_string().get() != "Hello from SSL client!")
+    {
+        printf("Websockets test (SSL/local) ERR!\n\n");
+    }
+    else
+    {
+        printf("Websockets test (SSL/local) OK!\n\n");
+    }
 
     wssClient.close().get();
 
-    printf("Websockets test (SSL) OK!\n\n");
+    // 3. SSL + web
+    //  -- OPEN TODO::: cannot reuse wssClient (runs on Assert() in ws_client_wspp.cpp)!!!! :-O 
+    websockets::client::websocket_client wssClientWeb(config_ssl); 
+    wssClientWeb.connect(U("wss://socketsbay.com/wss/v2/1/demo/")).get();
+
+    msg.set_utf8_message("Hello from client!");
+    wssClientWeb.send(msg).get();
+
+    resp = wssClientWeb.receive().get();
+    if (resp.extract_string().get() != "Hello from client!")
+    {
+        printf("Websockets test (SSL/web) ERR!\n\n");
+    }
+
+    wssClientWeb.close().get();
+
+    printf("Websockets test (SSL/web) OK!\n\n");
 }
