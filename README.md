@@ -1,8 +1,8 @@
 # arestcli
 
-arestcli (i.e. Asio REST Client) is a C++ REST client using (non-boost) Asio library underneath.
+arestcli (i.e. Asio REST Client) is a C++ REST client using (non-boost) *Asio* library underneath.
 
-This is a C++20 port of Microsoft's old REST-SDK (aka Casablanca) using Asio library instead of boost::Asio, and also forcing the usage of Asio on Windows.
+This is a C++20 port of Microsoft's old REST-SDK (aka Casablanca) using *Asio* library instead of *Boost.Asio*, and also forcing the usage of *Asio* on Windows.
 
 It was created because Boost.BEAST is quite unwieldy (and because it needs the whole of boost!!!).
 
@@ -14,8 +14,8 @@ It was created because Boost.BEAST is quite unwieldy (and because it needs the w
  - Only a VisualStudio 2022 solution provided!!! An only working for Debug build, to boot. :-(
 
 ## Plans: 
- - Currently a proprietary continuations library by Microsoft is used. I will try to remove this and use C++20 coroutines support in Asio instead.
- - The std::wstring is used in the API at the moment. This is irritating, will try to switch to narrow strings (it's UTF8 everywhere, innnit?)
+ - Currently a proprietary continuations library by Microsoft is used. I will try to remove this and use C++20 coroutines support in*Asio* instead.
+ - The *std::wstring* is used in the API at the moment. This is irritating, will try to switch to narrow strings (it's UTF8 everywhere, innnit?)
 
 ## Usage:
 
@@ -95,8 +95,8 @@ int main()
 ```
 
 ## Notes:
- - the example VisualStudio project expects Asio (just Asio, not boost::Asio!!!) to be installed in ../asio-1.28.0 (header-only, OPEN TODO::: automate it!)
- - also OpenSSL has to be installed - disable SLL support with CPPREST_EXCLUDE_SSL
+ - the example VisualStudio project expects *Asio* (just *Asio*, not *Boost.Asio*!!!) to be installed in ../asio-1.28.0 (header-only, OPEN TODO::: automate it!)
+ - also *OpenSSL* has to be installed - disable SLL support with CPPREST_EXCLUDE_SSL if you don't have it
 
 ### Build options:
 
@@ -104,5 +104,5 @@ int main()
  - CPPREST_EXCLUDE_WEBSOCKETS
  - CPPREST_EXCLUDE_COMPRESSION
 
- - CPPREST_WEBSOCKETPP_DEBUG : enable weebsocketpp's debug traces (otherwise ther are compiled out and cannot be switched on=
+ - CPPREST_WEBSOCKETPP_DEBUG : enable *websocketpp*'s debug traces (otherwise ther are compiled out and cannot be switched on)
  
